@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Crear Manifiesto  {% endblock %}
+
+{% block add_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css" integrity="sha512-bkB9w//jjNUnYbUpATZQCJu2khobZXvLP5GZ8jhltg7P/dghIrTaSJ7B/zdlBUT0W/LXGZ7FfCIqNvXjWKqCYA==" crossorigin="anonymous" />
+<link href="{% static "assets/css/fastselect.min.css" %}" rel="stylesheet" type="text/css" />
+<style>
+    .fstElement{
+        font-size: 0.8em;
+        width: 100%;
+    }
+    .fstMultipleMode .fstControls{
+        width: 100%;
+    }
+</style>
+<style>
+    .datepicker{
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+
+{% block contentmain %}
+
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <!-- <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li> -->
+                    <li class="breadcrumb-item active">Manifiesto de entrega</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-md-3 offset-md-3">
+                        <div class="form-group">
+                            <label for="employee">Cliente</label>
+                            <select class="form-control" id="employee" name="employee">
+                                <option value="0" selected>Seleccionar Cliente</option>
+                                {% for employee in employees %}
+                                <option value="{{employee.pk}}">{% if employee.code %}{{employee.code}} - {% endif %}{{employee.name}} {{employee.lastname}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="text" class="form-control" data-provide="datepicker" id="date_manifest" name="date_manifest">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12 col-md-3 offset-md-2">
+                        <!-- <div class="form-group">
+                            <label for="producto">Producto</label>
+                            <input type="text" class="form-control" id="producto" placeholder="">
+                        </div> -->
+                        <label for="example-select">Código del producto</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="autocomplete" id="autocomplete"/>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="cantidad">Nombre</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="text" class="form-control" id="unit" name="unit" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2" style="margin-top: 1.69rem">
+                        <button type="button" id="saveItem" class="btn btn-dark">Guardar</button>
+                    </div>
+                </div>
+            </div>
+            <!-- end row-->
+            <div class="row row-tabla mt-2">
+                <div class="col-12 col-md-8 offset-md-2">
+                    <div class="card-box table-responsive">
+                        <h4 class="header-title mb-2">Detalles del Manifiesto</h4>
+                        <table class="table table-hover m-0 table-centered  nowrap w-100"
+                            id="Pedidos-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Seriales</th>
+                                    <th>Categorias</th>
+                                    <th>Cantidad</th>
+                                    <th>Unidad</th>
+                                    <th class="hidden-sm">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablebody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="receive">Recibe</label>
+                                <input type="text" class="form-control" id="receive" name="receive" >
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="receive">Entrega</label>
+                                <input type="text" class="form-control" id="delivery" name="delivery" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Observaciones</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 offset-md-2">
+                            <div class="form-group mb-0 text-center">
+                                <button class="btn btn-dark btn-block" type="button">Cancelar </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group mb-0 text-center">
+                                <button class="btn btn-danger btn-block" id="saveManifest" type="button">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+            </div>
+            <!-- end row -->
+        </div> <!-- end container -->
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+{% block add_script %}
+<script src="{% static "assets/js/jquery.autocomplete.min.js" %}"></script>
+<script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+<script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+<script src="{% static "assets/js/fastselect.standalone.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+<!-- third party js ends -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot       = window.location.origin;
+        var productoSeleccionado = undefined;
+
+
+        $("#date_manifest").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+                       $.Fastselect.defaults = {
+
+            elementClass: 'fstElement',
+            singleModeClass: 'fstSingleMode',
+            noneSelectedClass: 'fstNoneSelected',
+            multipleModeClass: 'fstMultipleMode',
+            queryInputClass: 'fstQueryInput',
+            queryInputExpandedClass: 'fstQueryInputExpanded',
+            fakeInputClass: 'fstFakeInput',
+            controlsClass: 'fstControls',
+            toggleButtonClass: 'fstToggleBtn',
+            activeClass: 'fstActive',
+            itemSelectedClass: 'fstSelected',
+            choiceItemClass: 'fstChoiceItem',
+            choiceRemoveClass: 'fstChoiceRemove',
+            userOptionClass: 'fstUserOption',
+
+            resultsContClass: 'fstResults',
+            resultsOpenedClass: 'fstResultsOpened',
+            resultsFlippedClass: 'fstResultsFilpped',
+            groupClass: 'fstGroup',
+            itemClass: 'fstResultItem',
+            groupTitleClass: 'fstGroupTitle',
+            loadingClass: 'fstLoading',
+            noResultsClass: 'fstNoResults',
+            focusedItemClass: 'fstFocused',
+
+            matcher: null,
+
+            url: null,
+            loadOnce: false,
+            apiParam: 'query',
+            initialValue: null,
+            clearQueryOnSelect: true,
+            minQueryLength: 1,
+            focusFirstItem: false,
+            flipOnBottom: true,
+            typeTimeout: 150,
+            userOptionAllowed: false,
+            valueDelimiter: ',',
+            maxItems: null,
+
+            parseData: null,
+            onItemSelect: null,
+            onItemCreate: null,
+            onMaxItemsReached: null,
+
+            placeholder: 'Seleccione una opción',
+            searchPlaceholder: 'Buscar',
+            noResultsText: 'Sin Resultados',
+            userOptionPrefix: 'Agregar '
+
+        };
+
+
+
+
+        $('.multipleInputDynamicWithInitialValue').fastselect();
+
+        
+
+        $("#saveManifest").on("click", async function(){
+
+            let {employee, date_manifest, description, receive, delivery} = getObjectBody(["employee", "date_manifest", "description", "receive", "delivery"]);
+
+            if(validateEmptyOrNull(employee)){ messageError("Debe de Seleccionar un Cliente"); return; }
+            if(employee==null|| employee==undefined || employee==0){ messageError("Debe de Seleccionar un Cliente"); return; }
+            if(validateEmptyOrNull(date_manifest)){ messageError("Debe de Seleccionar una Fecha"); return; }
+            if(validateEmptyOrNull(receive)){ messageError("Ingrese el Nombre de la Persona que recibe"); return; }
+            if(validateEmptyOrNull(delivery)){ messageError("Ingrese el Nombre de la Persona que entrega"); return; }
+
+            date_manifest = convertDate(date_manifest);
+            
+            let urladd   = `${urlroot}/api/manifest`;
+
+            let details = [];
+
+            $("tr.js-product").each((index, elemento)=>{
+
+                let productId = $(elemento).find(".js_producto_id").first().data("id");
+                let unit      = $(elemento).find(".js_producto_unit").find("input").first().val();
+                let series     = $(elemento).find(".js_series").first().val();
+
+                console.log(productId);
+                console.log(unit);
+                details.push({product: productId, quantity: unit, series: series});
+            });
+
+            if(details.length==0){
+                messageError("Debe de Existir al menos un detalle para guardar el manifiesto"); 
+                return;
+            }
+
+
+            let data = {employee, date_manifest, details: details, description, receive, delivery};
+
+            let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+            let manifestNew    = await response.json();
+
+            // console.log(employee);
+            // console.log(priority);
+            // console.log(date_delivery);
+            // console.log(estado);
+
+            if(response.status==201){
+                menssageExit("Manifiesto", "Creado exitósamente");
+                window.location.reload();
+            }else{
+                throw new Error("Error al Intentar Agregar Vuelva a Intentar");
+            }
+
+        });
+
+        $(document).on("click", ".js-delete", function(){
+            $(this).parent().parent().remove();
+        });
+
+        $("#saveItem").on("click", function(){
+
+            let unit         = $("#unit").val();
+            let producto     = $("#name").val();
+
+            console.log(productoSeleccionado);
+            console.log("=======")
+
+
+            
+            if(validateEmptyOrNull(producto)){ messageError("Debe de Seleccionar el Producto"); return; }
+            if(validateEmptyOrNull(unit)){ messageError("Debe colocar el número de unidades"); return; }
+            if(!$.isNumeric(unit)){ messageError("Las unidades deben ser un número"); return; }
+
+            //let stock = parseFloat(productoSeleccionado.stock);
+
+            /*if(unit>stock){
+                messageError(`Las unidades superan el stock de: ${stock} unidades`); 
+                return;
+            }*/
+
+            if(unit==0){
+                messageError(`Las unidades deben ser mayor a 0`); 
+                return;
+            }
+            
+
+            let encontrado = false;
+
+            if(productoSeleccionado==undefined){
+                messageError("Debe Seleccionar un nuevo producto");
+                return;
+            }
+
+
+            $(".js-product").each((index, elemento)=>{
+                let id = $(elemento).find(".js_producto_id").first().data("id");
+
+                if(id==productoSeleccionado.id){
+                    encontrado = true;
+                }
+            });
+
+            if(encontrado){
+                messageError("El Producto ya fue agregado a los detalles");
+                return;
+            }
+
+            if(productoSeleccionado!=undefined)
+            {
+
+                console.log(productoSeleccionado);
+
+                let catNames = "";
+                let categories = productoSeleccionado.categories;
+
+                if(categories.length>0){
+                    categories.forEach(element => {
+
+                        catNames = catNames+" "+element.code+" "+element.name+", ";
+                        
+                    });
+                }
+
+                let template = `<tr class="js-product">
+                                    <td data-id="${productoSeleccionado.id}" class="js_producto_id"><input type="text" class="form-control" aria-describedby="" value="${producto}" readonly></td>
+                                    <td> <input
+                                                type="text"
+                                                multiple
+                                                class="multipleInputDynamicWithInitialValue js_series"
+                                                value=""
+                                                data-url="${urlroot}/api/list-product-serial/${productoSeleccionado.id}"
+                                                data-load-once="true"
+                                                 />
+                                    </td>
+                                    <td>${catNames}</td>
+                                    <td class="js_producto_unit"><input type="text" class="form-control" aria-describedby="" value="${unit}"></td>
+                                    <td>${productoSeleccionado.unit.name}</td>
+                                    <td><i class="la la-trash ico-trash js-delete"></i></td>
+                                </tr>`;
+
+                $("#tablebody").append(template);
+                $('.multipleInputDynamicWithInitialValue').fastselect();
+            }
+
+            productoSeleccionado = undefined;
+            $("#autocomplete").val("");
+            $("#name").val("");
+            $("#unit").val("");
+        });
+
+        $('#autocomplete').autocomplete({
+            serviceUrl: `${urlroot}/api/product`,
+            //lookup: countries,
+            onSelect: async function (suggestion) {
+
+                let url = `${urlroot}/api/product/${suggestion.data}`;
+
+                try {
+                    let response = await fetch(url);
+                    let product  = await response.json();
+
+                    productoSeleccionado = product;
+                    $("#name").val(product.name);
+                    $("#unit").val("1");
+                }catch(error){
+                    messageError("Problemas vuelva a intentar");
+                }
+                //alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            },
+            transformResult: function(response) {
+                console.log(response);
+                return {
+                    suggestions: $.map( JSON.parse(response), function(dataItem) {
+                        return { value: dataItem.name, data: dataItem.id };
+                    })
+                };
+            }
+        });
+
+    })();
+</script>
+{% endblock %}

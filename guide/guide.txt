@@ -1,0 +1,8 @@
+Commend 
+	py manage.py createsuperuser
+	user: aaa
+	password: 123456789
+Web browser
+	localhost:8000/admin
+	Input superuser values.
+	

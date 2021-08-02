@@ -1,0 +1,95 @@
+<div class="topbar-menu">
+    <div class="container-fluid">
+        <div id="navigation">
+            <!-- Navigation Menu-->
+            <ul class="navigation-menu">
+                <li class="has-submenu">
+                    <a href="{% url 'dashboard' %}">
+                        <i class="la la-home"></i>Dashboard</a>
+
+                </li>
+                {% if gname != "supervisor"%}
+                <li class="has-submenu">
+                        <a href="{% url 'orders' %}">
+                            <i class="la la-dashboard"></i>Pedidos</a>
+                </li>
+                {% endif %}
+                <li class="has-submenu">
+                    <a href="{% url 'list_manifiests' %}">
+                        <i class="la la-dashboard"></i>Manifiestos</a>
+
+               </li>
+
+               <li class="has-submenu">
+                    <a href="{% url 'transferencias' %}">
+                        <i class="la la-dashboard"></i>Transferencias</a>
+
+               </li>
+                {% if gname != "supervisor" and gname != "warehouse"%}
+                <li class="has-submenu">
+                    <a href="#">
+                        <i class="la la-cube"></i>Productos <div class="arrow-down"></div></a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="{% url 'products' %}">Productos</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'brands' %}">Marcas</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'categories' category=0 %}">Categorías</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'csv_load' %}">Carga Masiva</a>
+                        </li>
+                        <!-- <li>
+                            <a href="apps-contacts.html">Subcategorías</a>
+                        </li> -->
+                    </ul>
+                </li>
+                {% endif %}
+
+                <li class="has-submenu">
+                    <a href="#">
+                        <i class="la la-cube"></i>Reportes <div class="arrow-down"></div></a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="{% url 'report_mov' %}">Movimientos</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'report_inventory' %}">Stock Clientes</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'report_principal' %}">Stock Almacen</a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'bestseller' %}">Más Vendidos</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'lowstock' %}">Bajo Stock</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {% if gname != "warehouse"%}
+                <li class="has-submenu">
+                    <a href="{% url 'employees' %}"> <i class="la la-users"></i>Clientes </a>
+                </li>
+                {% endif %}
+
+                <!-- <li class="has-submenu">
+                    <a href="pages/inventario/inventario.html"> <i class="la la-list-alt"></i>Inventario </a>
+                </li> -->
+
+            </ul>
+            <!-- End navigation menu -->
+
+            <div class="clearfix"></div>
+        </div>
+        <!-- end #navigation -->
+    </div>
+    <!-- end container -->
+</div>

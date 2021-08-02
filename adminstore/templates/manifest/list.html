@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de manifiestos {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Manifiestos</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <a href="{% url 'manifiest' %}" class="btn btn-sm btn-dark waves-effect waves-light " >
+                    <i class="mdi mdi-plus-circle"></i> Agregar Manifiesto
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+        
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Manifiestos</h4>
+
+
+                <table id="tablemain" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Fecha Creación</th>
+                            <th>Cliente</th>
+                            <th>Impreso</th>
+                            <th>Mostrar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+   {% include "order/modals/modal-order.html" %}
+{% endblock %}
+ 
+ 
+{% block add_script %}
+ <script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+ <script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script> -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+ <script src="{% static "assets/js/utils.js" %}"></script>
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        var table = $('#tablemain').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_manifest_json' %}"
+        });
+
+
+
+        $(document).on("click", ".js-edit", async function(){
+            let idmanifest = $(this).data("id");
+            window.location.href = `${urlroot}/manifiesto/${idmanifest}`;
+        });
+
+
+        $(document).on("click", ".js-delete", async function(){
+            let manifestid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar el Manifiesto", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+
+                try {
+                    let urldelete  = `${urlroot}/api/manifest/${manifestid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Manifiesto", "Eliminado exitósamente");
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+        });
+
+    })();
+</script>
+
+{% endblock %}

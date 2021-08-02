@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Editar Orden  {% endblock %}
+
+{% block add_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css" integrity="sha512-bkB9w//jjNUnYbUpATZQCJu2khobZXvLP5GZ8jhltg7P/dghIrTaSJ7B/zdlBUT0W/LXGZ7FfCIqNvXjWKqCYA==" crossorigin="anonymous" />
+<link href="{% static "assets/css/fastselect.min.css" %}" rel="stylesheet" type="text/css" />
+<style>
+    .fstElement{
+        font-size: 0.8em;
+        width: 100%;
+    }
+    .fstMultipleMode .fstControls{
+        width: 100%;
+    }
+</style>
+<style>
+    .datepicker{
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <!-- <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li> -->
+                    <li class="breadcrumb-item active">Gestionar Pedidos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title-text">
+                            <h4>Información General</h4>
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+                <div class="row">
+                    <input type="hidden" name="idorder" id="idorder" value="{{order.pk}}" />
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="employee">Cliente</label>
+                            <select class="form-control" id="employee" name="employee">
+                                <option value="0" selected>Seleccionar Empleado</option>
+                                {% for employee in employees %}
+                                    {% if order.employee.pk == employee.pk %}
+                                        <option value="{{employee.pk}}" selected>{% if employee.code %}{{employee.code}} - {%endif%}{{employee.name}} {{employee.lastname}}</option>
+                                    {% else %}
+                                        <option value="{{employee.pk}}">{% if employee.code %}{{employee.code}} - {%endif%}{{employee.name}} {{employee.lastname}}</option>
+                                    {% endif %}
+                                <!-- <option value="{{employee.pk}}">{{employee.user.username}} - {{employee.name}} {{employee.lastname}}</option> -->
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="priority">Prioridad</label>
+                            <select class="form-control" id="priority" name="priority">
+                                <option value="1" {% if order.priority == 1 %} selected {% endif %}>Baja</option>
+                                <option value="2" {% if order.priority == 2 %} selected {% endif %}>Media</option>
+                                <option value="3" {% if order.priority == 3 %} selected {% endif %}>Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha de creación del pedido</label>
+                            <input type="text" class="form-control" readonly value="{{order.date_created|date:'d/m/Y'}}" >
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha de entrega del pedido</label>
+                            <input type="text" class="form-control" id="date_delivery" name="date_delivery" {%  if order.date_delivery %} value="{{order.date_delivery|date:'d/m/Y'}}" {% endif %} >
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="tpayment">Método de Pago</label>
+                            <select class="form-control" id="tpayment" name="tpayment">
+                                <option value="1" {% if order.tpayment == 1 %} selected {% endif %}>Crédito</option>
+                                <option value="2" {% if order.tpayment == 2 %} selected {% endif %}>Débito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="torder">Tipo</label>
+                            <select class="form-control" id="torder" name="torder" disabled>
+                                <option value="1" {% if order.torder == 1 %} selected {% endif %}>Pedido</option>
+                                <option value="2" {% if order.torder == 2 %} selected {% endif %}>Devolución</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="description">Nota</label>
+                            <input type="text" id="description" name="description" class="form-control" {% if order.description %} value="{{order.description}}" {% endif %} >
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title-text">
+                            <h4>Información del producto</h4>
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-2">
+                        <label for="example-select">Código del producto</label>
+                        <div class="input-group">
+                            <!-- <input type="text" class="form-control" placeholder="Buscar Código"
+                                aria-label="Recipient's username" aria-describedby="basic-addon2"> -->
+                            <input type="text" class="form-control" name="autocomplete" id="autocomplete"/>
+                            <!-- <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"><i
+                                        class="la la-search "></i></button>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" name="name" class="form-control">
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="unit">Unidad</label>
+                            <input type="text" id="unit" name="unit" class="form-control">
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="price">Precio</label>
+                            <input type="text" id="price" name="price" class="form-control">
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="total">Total</label>
+                            <input type="text" id="total" name="total" class="form-control" readonly >
+                        </div>
+                    </div>
+                    {% if order.status == 1%}
+                    <div class="col-lg-2 col-md-5">
+                        <button type="button" id="saveItem" style="margin-top: 26px;"
+                            class="btn btn-md btn-dark waves-effect waves-light">
+                            <i class="mdi mdi-plus-circle"></i> Agregar pedido
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end row-->
+
+            <div class="row row-tabla mt-2">
+                <div class="col-10 offset-1">
+                    <div class="card-box">
+                        <h4 class="header-title mb-2">Detalles de la orden</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover m-0 table-centered  nowrap w-100"
+                                id="Pedidos-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Seriales</th>
+                                        <th>Categorias</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Unidad</th>
+                                        <th>Total</th>
+                                        {% if order.status == 1%}
+                                        <th class="hidden-sm">Acción</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+    
+                                <tbody id="tablebody">                                    
+                                    {% for deta in details %}
+                                        <tr class="js-product" data-detalle="{{deta.pk}}">
+                                            <td data-id="{{deta.product.pk}}" class="js_producto_id">
+                                                {{deta.product.name}}
+                                            </td>
+                                            <td> 
+                                                <input
+                                                type="text"
+                                                multiple
+                                                class="multipleInputDynamicWithInitialValue js_series"
+                                                value=""
+                                                data-url="{% url 'product_serial_json' deta.product.pk %}"
+                                                data-load-once="true"
+                                                data-initial-value='{{deta.initialValues}}'
+                                                 />
+                                            </td>
+                                            <td>{{deta.catNames}}</td>
+                                            <td><input type="text" class="js_producto_price" value="{{deta.price}}" />$</td>
+                                            <td><input type="text" class="js_producto_unit" value="{{deta.quantity}}" /></td>
+                                            <td>{{deta.product.unit.name}}</td>
+                                            <td><input type="text" class="js_producto_total" value="{{deta.total}}" disabled />$</td>
+                                            {% if order.status == 1%}
+                                            <td>
+                                                <i class="la la-trash ico-trash js-delete"></i>
+                                            </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>  
+                    </div>
+                </div><!-- end col -->
+            </div>
+            {% if order.status == 1%}
+            <div class="row mb-2">
+                <div class="col-lg-4 col-sm-12 offset-lg-4">
+                    <button type="button" id="saveOrder" style="width:100%; margin-top: 26px;"
+                        class="btn btn-md btn-dark waves-effect waves-light">
+                        <i class="mdi mdi-plus-circle"></i> Actualizar pedido
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+
+{% endblock %}
+
+
+{% block add_script %}
+<script src="{% static "assets/js/jquery.autocomplete.min.js" %}"></script>
+<script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+<script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+<script src="{% static "assets/js/fastselect.standalone.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+<!-- third party js ends -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js" integrity="sha512-pF+DNRwavWMukUv/LyzDyDMn8U2uvqYQdJN0Zvilr6DDo/56xPDZdDoyPDYZRSL4aOKO/FGKXTpzDyQJ8je8Qw==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot       = window.location.origin;
+        var productoSeleccionado = undefined;
+
+
+        // var $select= $('.js_serial').selectize({
+        //     delimiter: ',',
+        //     persist: false,
+        //     create: function(input) {
+        //         return {
+        //             value: input,
+        //             text: input
+        //         }
+        //     }
+        // });
+
+        // var selectize = $select[0].selectize;
+
+
+
+       $.Fastselect.defaults = {
+
+            elementClass: 'fstElement',
+            singleModeClass: 'fstSingleMode',
+            noneSelectedClass: 'fstNoneSelected',
+            multipleModeClass: 'fstMultipleMode',
+            queryInputClass: 'fstQueryInput',
+            queryInputExpandedClass: 'fstQueryInputExpanded',
+            fakeInputClass: 'fstFakeInput',
+            controlsClass: 'fstControls',
+            toggleButtonClass: 'fstToggleBtn',
+            activeClass: 'fstActive',
+            itemSelectedClass: 'fstSelected',
+            choiceItemClass: 'fstChoiceItem',
+            choiceRemoveClass: 'fstChoiceRemove',
+            userOptionClass: 'fstUserOption',
+
+            resultsContClass: 'fstResults',
+            resultsOpenedClass: 'fstResultsOpened',
+            resultsFlippedClass: 'fstResultsFilpped',
+            groupClass: 'fstGroup',
+            itemClass: 'fstResultItem',
+            groupTitleClass: 'fstGroupTitle',
+            loadingClass: 'fstLoading',
+            noResultsClass: 'fstNoResults',
+            focusedItemClass: 'fstFocused',
+
+            matcher: null,
+
+            url: null,
+            loadOnce: false,
+            apiParam: 'query',
+            initialValue: null,
+            clearQueryOnSelect: true,
+            minQueryLength: 1,
+            focusFirstItem: false,
+            flipOnBottom: true,
+            typeTimeout: 150,
+            userOptionAllowed: false,
+            valueDelimiter: ',',
+            maxItems: null,
+
+            parseData: null,
+            onItemSelect: null,
+            onItemCreate: null,
+            onMaxItemsReached: null,
+
+            placeholder: 'Seleccione una opción',
+            searchPlaceholder: 'Buscar',
+            noResultsText: 'Sin Resultados',
+            userOptionPrefix: 'Agregar '
+
+        };
+
+
+
+
+        $('.multipleInputDynamicWithInitialValue').fastselect();
+
+
+
+        $("#date_delivery").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+        $("#saveOrder").on("click", async function(){
+
+        
+            let idorder = $("#idorder").val();
+            let {employee, priority, date_delivery, torder, description, tpayment} = getObjectBody(["employee","priority", "date_delivery", "torder", "description", "tpayment"]);
+
+
+            if(validateEmptyOrNull(priority)){ messageError("Debe de Seleccionar la Prioridad"); return; }
+            //if(validateEmptyOrNull(estado)){ messageError("Debe de Seleccionar el Estado de la Orden"); return; }
+
+
+            if(date_delivery!=undefined && date_delivery!=""){
+                date_delivery = convertDate(date_delivery);
+            }else{
+                date_delivery = undefined
+            }
+            
+
+            if(employee==0){
+                employee = undefined;
+            }
+
+            
+
+            let urladd   = `${urlroot}/api/order/${idorder}`;
+
+            let details = [];
+
+            $("tr.js-product").each((index, elemento)=>{
+
+
+                let detalle    = $(elemento).data("detalle");
+                let productId  = $(elemento).find(".js_producto_id").first().data("id");
+                let price      = $(elemento).find(".js_producto_price").first().val();
+                let unit       = $(elemento).find(".js_producto_unit").first().val();
+                let total      = $(elemento).find(".js_producto_total").first().val();
+                let series     = $(elemento).find(".js_series").first().val();
+
+                //price         = price.substring(0, price.lastIndexOf("$"));
+                //total         = total.substring(0, total.lastIndexOf("$"));
+
+                console.log(productId);
+                console.log(price);
+                console.log(unit);
+                console.log(total);
+
+                if($.isNumeric(price) && $.isNumeric(unit) && $.isNumeric(total) && productId!=undefined)
+                {
+                    details.push({id: detalle, product: productId, quantity: unit, price: price, total: total, series: series});
+                }
+                
+            });
+
+            if(details.length==0){
+                messageError("Debe de Existir al menos un detalle para guardar la orden"); 
+                return;
+            }
+
+            try {
+                let data = {employee, priority, date_delivery, status: 1, details: details, torder, description, tpayment};
+
+                let response       = await fetch(urladd,{ method: "put", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                let orderUpdate       = await response.json();
+
+                if(response.status==200){
+                    menssageExit("Orden", "Actualizada exitósamente");
+                    window.location.reload();
+                }else{
+                    throw new Error("Error al Intentar Agregar Vuelva a Intentar");
+                }
+            } catch (error) {
+                messageError("Ocurrio  un error, vuelva a intentar")
+            }
+
+        });
+
+        $(document).on("click", ".js-delete", async function(){
+            let id = $(this).parent().parent().data("detalle");
+
+            if(id==0){
+                $(this).parent().parent().remove();
+            }else{
+                try {
+                    let urldelete  = `${urlroot}/api/detail-order/${id}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        $(this).parent().parent().remove();
+                    }else{
+                        throw new Error("Ocurrio un error al intentar eliminar")
+                    }
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+            }
+
+        });
+
+        $("#saveItem").on("click", function(){
+
+            let producto = $("#name").val();
+            let price    = $("#price").val();
+            let unit     = $("#unit").val();
+            let total    = $("#total").val();
+
+            let torder   = $("#torder").val();
+
+
+
+            if(validateEmptyOrNull(producto)){ messageError("Debe de Seleccionar el Producto"); return; }
+            if(validateEmptyOrNull(price)){ messageError("Debe colocar el precio"); return; }
+            if(!$.isNumeric(price)){ messageError("El precio debe ser un número"); return; }
+            if(validateEmptyOrNull(unit)){ messageError("Debe colocar el número de unidades"); return; }
+            if(!$.isNumeric(unit)){ messageError("Las unidades deben ser un número"); return; }
+            if(validateEmptyOrNull(total)){ messageError("Debe haber un total"); return; }
+            if(!$.isNumeric(total)){ messageError("El total debe ser un número"); return; }
+
+            let stock = parseFloat(productoSeleccionado.stock);
+
+            if(unit>stock && torder==1){
+                messageError(`Las unidades superan el stock de: ${stock} unidades`); 
+                return;
+            }
+
+            if(unit==0){
+                messageError(`Las unidades deben ser mayor a 0`); 
+                return;
+            }
+            
+
+            let encontrado = false;
+
+            if(productoSeleccionado==undefined){
+                messageError("Debe Seleccionar un nuevo producto");
+                return;
+            }
+
+
+            $(".js-product").each((index, elemento)=>{
+
+                let id = $(elemento).find(".js_producto_id").first().data("id");
+
+                if(id==productoSeleccionado.id){
+                    encontrado = true;
+                }
+
+            });
+
+
+            if(encontrado){
+                messageError("El Producto ya fue agregado a los detalles");
+                return;
+            }
+
+            if(productoSeleccionado!=undefined)
+            {
+
+                let catNames = "";
+                let categories = productoSeleccionado.categories;
+
+                if(categories.length>0){
+                    categories.forEach(element => {
+
+                        catNames = catNames+" "+element.code+" "+element.name+", ";
+                        
+                    });
+                }
+                let template = `<tr class="js-product" data-detalle="0">
+                                    <td data-id="${productoSeleccionado.id}" class="js_producto_id">
+                                        ${producto}
+                                    </td>
+                                    <td> <input
+                                                type="text"
+                                                multiple
+                                                class="multipleInputDynamicWithInitialValue js_series"
+                                                value=""
+                                                data-url="${urlroot}/api/list-product-serial/${productoSeleccionado.id}"
+                                                data-load-once="true"
+                                                 />
+                                    </td>
+                                    <td>${catNames}</td>
+                                    <td><input type="text" class="js_producto_price" value="${price}" />$</td>
+                                    <td><input type="text" class="js_producto_unit"  value="${unit}" /></td>
+                                    <td>${productoSeleccionado.unit.name}</td>
+                                    <td><input type="text" class="js_producto_total" value="${total}" readonly />$</td>
+                                    <td>
+                                        <i class="la la-trash ico-trash js-delete"></i>
+                                    </td>
+                                </tr>`;
+                
+                
+
+                $("#tablebody").append(template);
+                $('.multipleInputDynamicWithInitialValue').fastselect();
+            }
+
+
+            productoSeleccionado = undefined;
+            $("#autocomplete").val("");
+            $("#name").val("");
+            $("#price").val("");
+            $("#unit").val("");
+            $("#total").val("");
+
+        });
+
+        $("#price").on("keyup", function(){
+            calculateTotal();
+        });
+
+        $("#unit").on("keyup", function(){
+            calculateTotal();
+        });
+
+        function calculateTotal(){
+            let price = $("#price").val();
+            let unit  = $("#unit").val();
+            let total  = parseFloat(price) * parseFloat(unit);
+            total = Math.round(total*100)/100;
+            $("#total").val(total);
+        }
+
+        $(document).on("keyup", ".js_producto_price", function(){
+
+
+            let price = $(this).val();
+
+            if(!$.isNumeric(price)){
+                messageError("El precio debe ser un valor númerico");
+                return;
+            }
+
+            let unit  = $(this).parent().parent().find(".js_producto_unit").first().val();
+            let total  = parseFloat(price) *  parseFloat(unit);
+            total = Math.round(total*100)/100;
+
+            $(this).parent().parent().find(".js_producto_total").first().val(total);
+        });
+
+        $(document).on("keyup", ".js_producto_unit" , function(){
+
+            let unit = $(this).val();
+
+            if(!$.isNumeric(unit)){
+                messageError("La Unidad debe ser un valor númerico");
+                return;
+            }
+
+            let price  = $(this).parent().parent().find(".js_producto_price").first().val();
+            let total  = price * unit;
+
+            $(this).parent().parent().find(".js_producto_total").first().val(total);
+
+        });
+
+        $('#autocomplete').autocomplete({
+            serviceUrl: `${urlroot}/api/product`,
+            //lookup: countries,
+            onSelect: async function (suggestion) {
+
+                let url = `${urlroot}/api/product/${suggestion.data}`;
+
+                try {
+                    let response = await fetch(url);
+                    let product  = await response.json();
+
+                    productoSeleccionado = product;
+                    $("#name").val(product.name);
+                    $("#price").val(product.price);
+                }catch(error){
+                    messageError("Problemas vuelva a intentar");
+                }
+                //alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            },
+            transformResult: function(response) {
+                console.log(response);
+                return {
+                    suggestions: $.map( JSON.parse(response), function(dataItem) {
+                        return { value: dataItem.name, data: dataItem.id };
+                    })
+                };
+            }
+        });
+
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de Categorías  {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Categorías</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <button type="button" class="btn btn-sm btn-dark waves-effect waves-light " id="addCategory">
+                    <i class="mdi mdi-plus-circle"></i> Agregar Categoría
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+                
+            <div class="card-body">
+                    
+                <h4 class="header-title">Listado de Categorías</h4>
+
+                <input type="hidden" name="category" id="category" value="{{category}}" />
+                
+
+                <table id="tableCategory" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <!-- <th>Categoría Padre</th> -->
+                            <th>Estado</th>
+                            <th>Productos</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td>000112558005</td>
+                            <td>Lorenloren korem</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalCat" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr> -->
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+
+{% endblock %}
+
+
+{% block modals %}
+   {% include "category/modals/modal-category.html" %}
+{% endblock %}
+
+
+{% block add_script %}
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+<script type="text/javascript">
+    (function(){
+
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot       = window.location.origin;
+        var category      = $("#category").val();
+
+        
+        var table = $('#tableCategory').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: `{% url 'order_list_category_json' %}?parent=${category}`
+        });
+
+        $("#addCategory").on("click", function(){
+            $("#modalCategory").modal('show');
+            let idcategory = $("#idcategory").val();
+            $("#idcategory").val(0);
+            initFormAdd();
+        });
+
+        function initFormAdd(){
+            cleanFieldsText(["code", "name"]);
+            document.getElementById("active1").checked = true;
+        }
+
+
+        $("#save").on("click", function(){
+            let idcategory = $("#idcategory").val();
+            addCategory(idcategory);
+        });
+
+        $(document).on("click", ".js-edit", async function(){
+            
+            $("#modalCategory").modal('show');
+            let idcategory = $(this).data("id");
+
+            let url = `${urlroot}/api/category/${idcategory}`;
+
+            try {
+                let response = await fetch(url);
+                let category = await response.json();
+
+                $("#code").val(category.code);
+                $("#name").val(category.name);
+
+                if(category.active)
+                    $("#active1").prop("checked", true);
+                else
+                    $("#active1").prop("checked", false);
+                
+
+                $("#idcategory").val(category.id);
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+        async function addCategory(idcategory){
+
+            let active    = document.getElementById('active1').checked ? true : false;
+            let {name, code} = getObjectBody(["name","code"])
+
+            if(validateEmptyOrNull(name)){ messageError("Debe de Ingresar el Nombre de la Categoría"); return; }
+            if(validateEmptyOrNull(name)){ messageError("Debe de Ingresar el Codigo de la Categoría"); return; }
+
+            let data = {code, name, active}
+
+            if(category!=0){
+                data.parent = category;
+            }
+
+
+            if(idcategory==0){
+
+                let urladd   = `${urlroot}/api/category`;
+
+                try{
+
+                    let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                    let categoryNew    = await response.json();
+
+
+                    if(response.status==201){
+                        menssageExit("Categoría", "Creada exitósamente");
+                        window.location.reload();
+                    }
+                    else if(response.status==406){
+                        messageError("El codigo de la categoria ya ha sido registrada anteriormente")
+                    }else{
+                        throw new Error("Error al Intentar Agregar Vuelva a Intentar")
+                    }
+
+                }catch(error){
+                    messageError("Error al Intentar Agregar Vuelva a Intentar");
+                }
+
+
+            }else{
+
+                let urledit =  `${urlroot}/api/category/${idcategory}`;
+
+
+                try {
+                    let response          =  await fetch(urledit,{ method: "put", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data)});
+                    let categoryUpdate    =  await response.json(); 
+
+                    if(response.status==200){
+                        menssageExit("Categoría", "Actualizada exitósamente")
+                        window.location.reload();
+                    }else if(response.status==406){
+                        messageError("El codigo de la categoria ya ha sido registrada anteriormente")
+                    }else{
+                        throw new Error("Error al Intentar Agregar Vuelva a Intentar")
+                    }
+
+                } catch (error) {
+                    messageError("Error, Problemas al Actualizar")
+                }
+            }
+        }
+
+        $(document).on("click", ".js-delete", async function(){
+            let categoryid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar la Categoría", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+                
+                try {
+                    let urldelete  = `${urlroot}/api/category/${categoryid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Categoria", "Eliminada exitósamente");
+                        window.location.reload();
+                    }
+                    
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+
+          });
+        
+
+    })();
+</script>
+{% endblock %}

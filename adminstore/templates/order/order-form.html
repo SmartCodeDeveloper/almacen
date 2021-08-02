@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}  Crear Orden  {% endblock %}
+
+{% block add_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css" integrity="sha512-bkB9w//jjNUnYbUpATZQCJu2khobZXvLP5GZ8jhltg7P/dghIrTaSJ7B/zdlBUT0W/LXGZ7FfCIqNvXjWKqCYA==" crossorigin="anonymous" />
+<link href="{% static "assets/css/fastselect.min.css" %}" rel="stylesheet" type="text/css" />
+<style>
+    .fstElement{
+        font-size: 0.8em;
+        width: 100%;
+    }
+    .fstMultipleMode .fstControls{
+        width: 100%;
+    }
+</style>
+<style>
+    .datepicker{
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <!-- <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li> -->
+                    <li class="breadcrumb-item active">Gestionar Pedidos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title-text">
+                            <h4>Información General</h4>
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="employee">Cliente</label>
+                            <select class="form-control" id="employee" name="employee">
+                                <option value="0" selected>Seleccionar Empleado</option>
+                                {% for employee in employees %}
+                                <option value="{{employee.pk}}">{% if employee.code %}{{employee.code}} - {%endif%}{{employee.name}} {{employee.lastname}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="priority">Prioridad</label>
+                            <select class="form-control" id="priority" name="priority">
+                                <option value="1">Baja</option>
+                                <option value="2">Media</option>
+                                <option value="3">Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha de entrega del pedido</label>
+                            <input type="text" class="form-control" id="date_delivery" name="date_delivery" >
+                        </div>
+                    </div>
+                    <!-- <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha de entrega del pedido</label>
+                            <input type="text" class="form-control" id="date_odelivery" name="date_odelivery" >
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Fecha de entrega del pedido</label>
+                            <input type="time" class="form-control" id="date_oidelivery" name="date_oidelivery" >
+                        </div>
+                    </div> -->
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="tpayment">Método de Pago</label>
+                            <select class="form-control" id="tpayment" name="tpayment">
+                                <option value="1">Crédito</option>
+                                <option value="2">Débito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label for="torder">Tipo</label>
+                            <select class="form-control" id="torder" name="torder">
+                                <option value="1">Pedido</option>
+                                <option value="2">Devolución</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="description">Nota</label>
+                            <input type="text" id="description" name="description" class="form-control" >
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title-text">
+                            <h4>Información del producto</h4>
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-2">
+                        <label for="example-select">Código del producto</label>
+                        <div class="input-group">
+                            <!-- <input type="text" class="form-control" placeholder="Buscar Código"
+                                aria-label="Recipient's username" aria-describedby="basic-addon2"> -->
+                            <input type="text" class="form-control" name="autocomplete" id="autocomplete"/>
+                            <!-- <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"><i
+                                        class="la la-search "></i></button>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                            <div class="form-group">
+                                <label for="name">Nombre</label>
+                                <input type="text" id="name" name="name" class="form-control">
+                            </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="unit">Unidad</label>
+                            <input type="text" id="unit" name="unit" class="form-control">
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="price">Precio</label>
+                            <input type="text" id="price" name="price" class="form-control">
+                        </div>
+                    </div> <!-- end col -->
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label for="total">Total</label>
+                            <input type="text" id="total" name="total" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-5">
+                        <button type="button" id="saveItem" style="margin-top: 26px;"
+                            class="btn btn-md btn-dark waves-effect waves-light">
+                            <i class="mdi mdi-plus-circle"></i> Agregar pedido
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- end row-->
+
+            <div class="row row-tabla mt-2">
+                <div class="col-10 offset-1">
+                    <div class="card-box">
+                        <h4 class="header-title mb-2">Detalles de la orden</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover m-0 table-centered  nowrap w-100"
+                                id="Pedidos-table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Seriales</th>
+                                        <th>Categorias</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                        <th class="hidden-sm">Acción</th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody id="tablebody">
+                                </tbody>
+                            </table>
+                        </div>  
+                    </div>
+                </div><!-- end col -->
+            </div>
+            <div class="row mb-2">
+                <div class="col-lg-4 col-sm-12 offset-lg-4">
+                    <button type="button" id="saveOrder" style="width:100%; margin-top: 26px;"
+                        class="btn btn-md btn-dark waves-effect waves-light">
+                        <i class="mdi mdi-plus-circle"></i> Guardar pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+
+{% endblock %}
+
+
+{% block add_script %}
+<script src="{% static "assets/js/jquery.autocomplete.min.js" %}"></script>
+<script src="{% static "assets/libs/moment/moment.min.js" %}"></script>
+<script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+<script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+<script src="{% static "assets/js/fastselect.standalone.min.js" %}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+<!-- third party js ends -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot       = window.location.origin;
+        var productoSeleccionado = undefined;
+
+
+        $.Fastselect.defaults = {
+
+            elementClass: 'fstElement',
+            singleModeClass: 'fstSingleMode',
+            noneSelectedClass: 'fstNoneSelected',
+            multipleModeClass: 'fstMultipleMode',
+            queryInputClass: 'fstQueryInput',
+            queryInputExpandedClass: 'fstQueryInputExpanded',
+            fakeInputClass: 'fstFakeInput',
+            controlsClass: 'fstControls',
+            toggleButtonClass: 'fstToggleBtn',
+            activeClass: 'fstActive',
+            itemSelectedClass: 'fstSelected',
+            choiceItemClass: 'fstChoiceItem',
+            choiceRemoveClass: 'fstChoiceRemove',
+            userOptionClass: 'fstUserOption',
+
+            resultsContClass: 'fstResults',
+            resultsOpenedClass: 'fstResultsOpened',
+            resultsFlippedClass: 'fstResultsFilpped',
+            groupClass: 'fstGroup',
+            itemClass: 'fstResultItem',
+            groupTitleClass: 'fstGroupTitle',
+            loadingClass: 'fstLoading',
+            noResultsClass: 'fstNoResults',
+            focusedItemClass: 'fstFocused',
+
+            matcher: null,
+
+            url: null,
+            loadOnce: false,
+            apiParam: 'query',
+            initialValue: null,
+            clearQueryOnSelect: true,
+            minQueryLength: 1,
+            focusFirstItem: false,
+            flipOnBottom: true,
+            typeTimeout: 150,
+            userOptionAllowed: false,
+            valueDelimiter: ',',
+            maxItems: null,
+
+            parseData: null,
+            onItemSelect: null,
+            onItemCreate: null,
+            onMaxItemsReached: null,
+
+            placeholder: 'Seleccione una opción',
+            searchPlaceholder: 'Buscar',
+            noResultsText: 'Sin Resultados',
+            userOptionPrefix: 'Agregar '
+
+        };
+
+
+
+
+        $('.multipleInputDynamicWithInitialValue').fastselect();
+
+
+        $("#date_delivery").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+        $("#date_odelivery").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+
+        $("#saveOrder").on("click", async function(){
+
+            let {employee, priority, date_delivery,  torder, description, tpayment} = getObjectBody(["employee","priority", "date_delivery", "torder", "description", "tpayment"]);
+
+
+            if(validateEmptyOrNull(priority)){ messageError("Debe de Seleccionar la Prioridad"); return; }
+            //if(validateEmptyOrNull(estado)){ messageError("Debe de Seleccionar el Estado de la Orden"); return; }
+
+
+            if(date_delivery!=undefined && date_delivery!=""){
+                date_delivery = convertDate(date_delivery);
+            }else{
+                date_delivery = undefined;
+            }
+            
+
+            if(employee==0){
+                employee = undefined;
+            }
+
+            
+            let urladd   = `${urlroot}/api/order`;
+
+            let details = [];
+
+            $("tr.js-product").each((index, elemento)=>{
+
+                let productId = $(elemento).find(".js_producto_id").first().data("id");
+                let price     = $(elemento).find(".js_producto_price").first().text();
+                let unit      = $(elemento).find(".js_producto_unit").first().text();
+                let total     = $(elemento).find(".js_producto_total").first().text();
+                let series    = $(elemento).find(".js_series").first().val();
+
+                price         = price.substring(0, price.lastIndexOf("$"));
+                total         = total.substring(0, total.lastIndexOf("$"));
+
+                console.log(productId);
+                console.log(price);
+                console.log(unit);
+                console.log(total);
+
+                details.push({product: productId, quantity: unit, price: price, total: total, series: series});
+                
+            });
+
+            if(details.length==0){
+                messageError("Debe de Existir al menos un detalle para guardar la orden"); 
+                return;
+            }
+
+
+            let data = {employee, priority, date_delivery, status: 1, details: details, torder, description, tpayment};
+
+            let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+            let orderNew       = await response.json();
+
+            // console.log(employee);
+            // console.log(priority);
+            // console.log(date_delivery);
+            // console.log(estado);
+
+            if(response.status==201){
+                menssageExit("Orden", "Creada exitósamente");
+                window.location.reload();
+            }
+            else{
+                throw new Error("Error al Intentar Agregar Vuelva a Intentar");
+            }
+
+        });
+
+        $(document).on("click", ".js-delete", function(){
+            $(this).parent().parent().remove();
+        });
+
+        $("#saveItem").on("click", function(){
+
+            let torder   = $("#torder").val();
+
+            let producto = $("#name").val();
+            let price    = $("#price").val();
+            let unit     = $("#unit").val();
+            let total    = $("#total").val();
+
+
+            if(validateEmptyOrNull(producto)){ messageError("Debe de Seleccionar el Producto"); return; }
+            if(validateEmptyOrNull(price)){ messageError("Debe colocar el precio"); return; }
+            if(!$.isNumeric(price)){ messageError("El precio debe ser un número"); return; }
+            if(validateEmptyOrNull(unit)){ messageError("Debe colocar el número de unidades"); return; }
+            if(!$.isNumeric(unit)){ messageError("Las unidades deben ser un número"); return; }
+            if(validateEmptyOrNull(total)){ messageError("Debe haber un total"); return; }
+            if(!$.isNumeric(total)){ messageError("El total debe ser un número"); return; }
+
+            let stock = parseFloat(productoSeleccionado.stock);
+
+            if(unit>stock && torder==1){
+                messageError(`Las unidades superan el stock de: ${stock} unidades`); 
+                return;
+            }
+
+            if(unit==0){
+                messageError(`Las unidades deben ser mayor a 0`); 
+                return;
+            }
+            
+
+            let encontrado = false;
+
+            if(productoSeleccionado==undefined){
+                messageError("Debe Seleccionar un nuevo producto");
+                return;
+            }
+
+
+            $(".js-product").each((index, elemento)=>{
+
+                let id = $(elemento).find(".js_producto_id").first().data("id");
+
+                if(id==productoSeleccionado.id){
+                    encontrado = true;
+                }
+
+            });
+
+
+            if(encontrado){
+                messageError("El Producto ya fue agregado a los detalles");
+                return;
+            }
+
+            if(productoSeleccionado!=undefined)
+            {
+
+                let catNames = "";
+                let categories = productoSeleccionado.categories;
+
+                if(categories.length>0){
+                    categories.forEach(element => {
+
+                        catNames = catNames+" "+element.code+" "+element.name+", ";
+                        
+                    });
+                }
+
+
+                let template = `<tr class="js-product">
+                                    <td data-id="${productoSeleccionado.id}" class="js_producto_id">
+                                        ${producto}
+                                    </td>
+                                    <td> <input
+                                                type="text"
+                                                multiple
+                                                class="multipleInputDynamicWithInitialValue js_series"
+                                                value=""
+                                                data-url="${urlroot}/api/list-product-serial/${productoSeleccionado.id}"
+                                                data-load-once="true"
+                                                 />
+                                    </td>
+                                    <td>${catNames}</td>
+                                    <td class="js_producto_price">${price}$</td>
+                                    <td class="js_producto_unit">${unit}</td>
+                                    <td>${productoSeleccionado.unit.name}</td>
+                                    <td class="js_producto_total">${total}$</td>
+                                    <td>
+                                        <i class="la la-trash ico-trash js-delete"></i>
+                                    </td>
+                                </tr>`;
+
+                $("#tablebody").append(template);
+                $('.multipleInputDynamicWithInitialValue').fastselect();
+            }
+
+            productoSeleccionado = undefined;
+            $("#autocomplete").val("");
+            $("#name").val("");
+            $("#price").val("");
+            $("#unit").val("");
+            $("#total").val("");
+
+        });
+
+        $("#price").on("keyup", function(){
+            calculateTotal();
+        });
+
+        function calculateTotal(){
+            let price = $("#price").val();
+            let unit  = $("#unit").val();
+            let total  = parseFloat(price) * parseFloat(unit);
+
+            total = Math.round(total*100)/100;
+            $("#total").val(total);
+        }
+
+        $("#unit").on("keyup", function(){
+            calculateTotal();
+        });
+
+        $('#autocomplete').autocomplete({
+            serviceUrl: `${urlroot}/api/product`,
+            //lookup: countries,
+            onSelect: async function (suggestion) {
+
+                let url = `${urlroot}/api/product/${suggestion.data}`;
+
+                try {
+                    let response = await fetch(url);
+                    let product  = await response.json();
+
+                    productoSeleccionado = product;
+                    $("#name").val(product.name);
+                    $("#price").val(product.price);
+                }catch(error){
+                    messageError("Problemas vuelva a intentar");
+                }
+                //alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            },
+            transformResult: function(response) {
+                console.log(response);
+                return {
+                    suggestions: $.map( JSON.parse(response), function(dataItem) {
+                        return { value: dataItem.name, data: dataItem.id };
+                    })
+                };
+            }
+        });
+
+    })();
+</script>
+{% endblock %}

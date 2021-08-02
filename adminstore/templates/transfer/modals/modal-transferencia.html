@@ -1,0 +1,30 @@
+<div id="modalStatus" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Estado de la Transferencia</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="idmov" id="idmov" value="0" />    
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <div class="form-group">
+                                <label for="estado">Estado</label>
+                                <select class="form-control" id="estado" name="estado">
+                                    <option value="1">Pendiente</option>
+                                    <option value="2">Aprobado</option>
+                                    <option value="3">Negada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="save" class="btn btn-danger waves-effect waves-light">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal -->
+        

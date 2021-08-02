@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de Transferencias {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Transferencias</li>
+                </ol>
+            </div>            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+        
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Transferencias</h4>
+                <table id="tablemain" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>De</th>
+                            <th>A</th>
+                            <th>Observaciones</th>
+                            <th>Estado</th>
+                            <th>Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+   {% include "transfer/modals/modal-transferencia.html" %}
+   {% include "transfer/modals/modal-mov.html" %}
+{% endblock %}
+ 
+ 
+{% block add_script %}
+ <script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+ <script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script> -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+ <script src="{% static "assets/js/utils.js" %}"></script>
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        var table = $('#tablemain').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_transfer_json' %}"
+        });
+
+
+        $(document).on("click", ".js-change-status", async function(){
+
+            $("#modalStatus").modal('show');
+
+            let idmov = $(this).data("id");
+            $("#idmov").val(idmov);
+
+            let url = `${urlroot}/api/transference/${idmov}`;
+
+            try {
+
+                let response = await fetch(url);
+                let transference = await response.json();
+
+                console.log(transference)  
+                $("#estado").val(transference.status);
+
+                if(transference.status==1){
+                    $("#estado").prop("disabled", false);
+                }else{
+                    $("#estado").prop("disabled", true);
+                }
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+
+        $(document).on("click", ".js-ver-detail", async function(){
+
+            $("#modalMov").modal('show');
+
+            let mov      = $(this).data("id");
+            let urladd   = `${urlroot}/api/detail-movement/${mov}`;
+
+            try{
+
+                $("#tableDetail").html("");
+
+                let response       = await fetch(urladd,{ method: "get", headers: { 'Accept': 'application/json','Content-Type': 'application/json', 'X-CSRFToken': csrftoken } });
+                let details        = await response.json();
+                let total  = 0;
+
+                if(details.length>0){
+
+                    details.forEach(element => {
+
+
+                        catNames = "";
+
+                        let categories = element.product.categories;
+
+                        if(categories.length>0){
+                            categories.forEach((cat)=>{
+                                catNames = cat.code +" "+cat.name+", "+catNames;
+                            });
+                        }
+
+                        let template =  ` <tr>
+                                                <th scope="row">${element.product.code}</th>
+                                                <td>${element.product.name}</td>
+                                                <td>${catNames}</td>
+                                                <td>${element.product.unit.name}</td>
+                                                <td>${element.quantity}</td>
+                                         </tr>`;
+                        
+                        total = total + parseFloat(element.quantity);
+                        
+                        $("#tableDetail").append(template);                        
+                     });
+
+                     let totalTemplate = `<tr>
+                                                <td colspan="4">Total productos</td>
+                                                <td>${total.toFixed(2)}</td>
+                                            </tr>`;
+
+                    $("#tableDetail").append(totalTemplate);
+                    $("#modalStock").modal('show');
+
+
+                }else{
+                    menssageExit("Detalles", "No Encontrados");
+                }
+
+            }catch(error){
+                messageError("Error al Intentar Agregar Vuelva a Intentar");
+            }
+
+        });
+
+
+        $("#save").on("click", async function(){
+
+            let { estado} = getObjectBody(["estado"]);
+            let idmov = $("#idmov").val();
+
+
+            try {
+
+                let urladd   = `${urlroot}/api/change-transference/${idmov}`;
+
+                let data = {status: estado};
+
+                let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                let change         = await response.json();
+
+                if(change){
+                    menssageExit("Transferencia", "Procesada exitósamente");
+                    window.location.reload();
+                }
+                
+            } catch (error) {
+                messageError("Ocurrio un error, vuelva a intentarlo")
+            }
+
+        })
+
+
+        $(document).on("click", ".js-edit", async function(){
+            
+            let idorder = $(this).data("id");
+            window.location.href = `${urlroot}/orden/${idorder}`;
+
+        });
+
+        $(document).on("click", ".js-delete", async function(){
+            let orderid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar la Orden", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+
+                try {
+                    let urldelete  = `${urlroot}/api/order/${orderid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Orden", "Eliminada exitósamente");
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+        });
+
+    })();
+</script>
+
+{% endblock %}

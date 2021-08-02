@@ -1,0 +1,61 @@
+<div id="modalBrand" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detalles de la marca</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="idbrand" id="idbrand" value="0" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="name" class="control-label">Nombre</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-1">
+                        <div class="form-group no-margin">
+                            <label for="description" class="control-label">Descripción</label>
+                            <textarea class="form-control" id="description" name="description" placeholder=""></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-1">  
+                        <div class="form-group mb-0">
+                            <label id="labelimage">Imagen del producto</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" id="photo" name="photo" class="custom-file-input" lang="es">
+                                    <label class="custom-file-label" for="photo">Subir imagen</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mt-2">
+                        <div class="form-group mb-3">
+                            <div class="custom-control custom-checkbox checkbox-info">
+                                <input type="checkbox" class="custom-control-input" id="active1" name="active1">
+                                <label class="custom-control-label" for="active1">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="div_image" style="display: none;" >
+                    <div class="col-12 mt-3">
+                        <image id="imageupload" name="imageupload" src="" width="100" height="100" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="save" class="btn btn-danger waves-effect waves-light">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div><!-- /.modal -->

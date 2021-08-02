@@ -1,0 +1,73 @@
+<div id="modalOrder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detalles de la categoría</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="idorder" id="idorder" value="0" />
+
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="priority">Prioridad</label>
+                            <select class="form-control" id="priority" name="priority">
+                                <option value="1">Baja</option>
+                                <option value="2">Media</option>
+                                <option value="3">Alta</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select class="form-control" id="estado" name="estado">
+                                <option value="1">Pendiente</option>
+                                <option value="2">Aprobado</option>
+                                <option value="3">Negada</option>
+                                <option value="4">Entregado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label>Fecha Estimada de Entrega</label>
+                            <input type="text" class="form-control" id="date_delivery" name="date_delivery" >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label>Fecha de entrega del pedido</label>
+                            <input type="text" class="form-control" id="date_delivery2" name="date_delivery2" >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-3">
+                        <div class="form-group">
+                            <label>Hora de entrega</label>
+                            <input style="width: 100px;" type="time" class="form-control" id="hour_delivery" name="hour_delivery">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="save" class="btn btn-danger waves-effect waves-light">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div><!-- /.modal -->
+    

@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de Marcas  {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Marcas</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <button type="button" class="btn btn-sm btn-dark waves-effect waves-light " id="addBrand">
+                    <i class="mdi mdi-plus-circle"></i> Agregar Marca
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                    
+                <h4 class="header-title">Listado de Marcas</h4>
+                
+                <table id="tableBrand" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <td>ID</td>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td>
+                                <a href="javascript: void(0);" class="text-body">
+                                    <img src="{% static "../../assets/images/users/user-9.jpg" %}"
+                                        alt="contact-img" title="contact-img"
+                                        class="rounded-circle avatar-xs" />
+                                    <span class="ml-2">Lorenloren korem</span>
+                                </a>
+                            </td>
+                            <td>Lorem, ipsum dolor sit amet</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalMarca" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="javascript: void(0);" class="text-body">
+                                    <img src="{% static "../../assets/images/users/user-9.jpg" %}"
+                                        alt="contact-img" title="contact-img"
+                                        class="rounded-circle avatar-xs" />
+                                    <span class="ml-2">Lorenloren korem</span>
+                                </a>
+                            </td>
+                            <td>Lorem, ipsum dolor sit amet</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalMarca" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr> -->
+
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+{% endblock %}
+
+
+{% block modals %}
+    {% include "brand/modals/modal-brand.html" %}
+ {% endblock %}
+ 
+ 
+ {% block add_script %}
+
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+ <!-- third party js ends -->
+
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+ <script src="{% static "assets/js/utils.js" %}"></script>
+
+ 
+ <script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        
+        var table = $('#tableBrand').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_brand_json' %}"
+        });
+
+
+        $("#addBrand").on("click", function(){
+            $("#modalBrand").modal('show');
+            let idbrand = $("#idbrand").val();
+            $("#idbrand").val(0);
+            initFormAdd();
+        });
+
+        function initFormAdd(){
+            cleanFieldsText(["name", "description"]);
+            document.getElementById("active1").checked = true;
+            $("#imageupload").removeAttr("src","");
+            $("#div_image").hide();
+        }
+
+
+        $("#imageupload").on("error", function() {
+            $(this).attr("src", "");
+            $("#div_image").hide();
+        })
+
+        $("#save").on("click", function(){
+            //alert("save");
+            let idbrand = $("#idbrand").val();
+            addBrand(idbrand);
+        });
+
+
+
+        $(document).on("click", ".js-delete", async function(){
+            let branid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar la Marca", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+                
+                try {
+                    let urldelete  = `${urlroot}/api/brand/${branid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Marca", "Eliminada exitósamente");
+                        window.location.reload();
+                    }
+                    
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+
+          });
+
+        $(document).on("click", ".js-edit", async function(){
+            
+            $("#modalBrand").modal('show');
+            let idbrand = $(this).data("id");
+
+            let url = `${urlroot}/api/brand/${idbrand}`;
+
+            try {
+                let response = await fetch(url);
+                let brand = await response.json();
+
+                $("#name").val(brand.name);
+                $("#description").val(brand.description);
+
+                if(brand.active)
+                    $("#active1").prop("checked", true);
+                else
+                    $("#active1").prop("checked", false);
+                
+                
+                if(brand.photo){
+                    $("#div_image").show();
+                    $("#imageupload").attr("src", brand.photo);
+                }
+
+                $("#idbrand").val(brand.id);
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+        $("#photo").on("change", function(e){
+            console.log(e.target)
+            if(e.target.files && e.target.files[0]){
+
+                let namefile = e.target.files[0].name;
+
+                if(validExtension(namefile, ['jpg','png','jpeg'])){
+                    var reader = new FileReader();
+                    $("#div_image").show();
+                    $("#imageupload").attr("src", window.URL.createObjectURL(this.files[0]));
+                    $("#labelimage").text(this.files[0].name);
+                }else{
+                    $("#div_image").hide();
+                    e.target.files[0] = undefined;
+                    messageError("Debe Adjuntar una imagen");
+                }
+            }
+        });
+
+
+        async function addBrand(idbrand){
+
+            let active    = document.getElementById('active1').checked ? true : false;
+            let {name, description} = getObjectBody(["name","description"])
+            let photo  = document.getElementById("photo").files[0];
+
+            if(validateEmptyOrNull(name)){ messageError("Debe de Ingresar el Nombre de la Marca"); return; }
+
+            let form_data = new FormData();
+
+            form_data.append("name", name);
+
+            if(description!=null && description!=undefined){
+                form_data.append("description", description);
+            }
+
+            form_data.append("active", active);
+
+            if(photo != null && photo != undefined ){
+                if(!validExtension(photo.name, ['jpg','png','jpeg'])){  messageError("El Archivo adjunto debe ser una imagen"); return; }
+                form_data.append("photo", photo, photo.name);
+            }
+
+
+            if(idbrand==0){
+
+                let urladd   = `${urlroot}/api/brand`;
+
+                try{
+
+                    let response = await fetch(urladd,{ method: "post", headers: { 'X-CSRFToken': csrftoken }, body: form_data });
+                    let brand    = await response.json();
+
+                    menssageExit("Marca", "Creada exitósamente");
+                    window.location.reload();
+
+                }catch(error){
+                    messageError("Error al Intentar Agregar Vuelva a Intentar");
+                }
+
+
+            }else{
+
+                let urledit =  `${urlroot}/api/brand/${idbrand}`;
+
+
+                try {
+                    let response =  await fetch(urledit,{ method: "put", headers: {'X-CSRFToken': csrftoken }, body: form_data });
+                    let brand    = await response.json(); 
+
+                    menssageExit("Marca", "Actualizada exitósamente")
+                    window.location.reload();
+                    
+                } catch (error) {
+                    messageError("Error, Problemas al Actualizar")
+                }
+            }
+        }
+
+    })();
+ </script>
+ {% endblock %}

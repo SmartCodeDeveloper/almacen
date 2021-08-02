@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Admin - Almacen{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    {% include "main/commonstyle.html" %}
+
+    {% block add_css %}
+    {% endblock %}
+
+</head>
+
+<body>
+
+    {% include "main/header.html" %}
+
+    <div class="wrapper">
+        <div class="container-fluid">
+            {% block contentmain %} 
+            {% endblock %}
+
+            {% block modals %}
+            {% endblock %}
+        </div> 
+    </div>
+
+    {% include "main/footer.html" %}
+
+    <div class="rightbar-overlay"></div>
+
+    {% include "main/commonscript.html" %}
+    {% block add_script %} {% endblock %}
+
+</body>
+
+</html>

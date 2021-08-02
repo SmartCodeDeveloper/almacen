@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de Clientes {% endblock %}
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Clientes</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <button type="button" class="btn btn-sm btn-dark waves-effect waves-light " id="addEmployee">
+                    <i class="mdi mdi-plus-circle"></i> Agregar Cliente
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+    
+    
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+                
+            <div class="card-body">
+                    
+                <h4 class="header-title">Listado de Clientes</h4>
+                
+
+                <table id="tableEmployee" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <!-- <th>Correo</th> -->
+                            <th>Estado</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        <!-- <tr>
+                            <td>Tiger </td>
+                            <td>Nixont</td>
+                            <td>000112558005</td>
+                            <td>tiger@gmail.com</td>
+                            <td>Lorenloren korem</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Garrett </td>
+                            <td>Winters</td>
+                            <td>000112558005</td>
+                            <td>Garrett@gmail.com</td>
+                            <td>Lorenloren korem</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Ashton</td>
+                            <td>Cox</td>
+                            <td>000112558005</td>
+                            <td>Ashton@gmail.com</td>
+                            <td>Lorenloren korem</td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr>
+                    
+                        <tr>
+                            <td>Jennifer </td>
+                            <td>Chang</td>
+                            <td>000112558005</td>
+                            <td>Ashton@gmail.com</td>
+                            <td>Lorenloren korem</td>
+                            <td>Inactivo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Donna </td>
+                            <td>Snider</td>
+                            <td>000112558005</td>
+                            <td>Ashton@gmail.com</td>
+                            <td>Lorenloren korem</td>
+                            <td>Inactivo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado" class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"  class="la la-trash ico-trash"></i></td>
+                        </tr> -->
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+
+{% endblock %}
+
+
+{% block modals %}
+    {% include "employee/modals/modal-employee.html" %}
+ {% endblock %}
+ 
+ 
+ {% block add_script %}
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+ <script src="{% static "assets/js/utils.js" %}"></script>
+
+ <script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        
+        var table = $('#tableEmployee').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_employee_json' %}"
+        });
+
+
+        $("#addEmployee").on("click", function(){
+            $("#modalEmployee").modal('show');
+            let idemployee = $("#idemployee").val();
+            $("#idemployee").val(0);
+            initFormAdd();
+        });
+
+
+        function initFormAdd(){
+            cleanFieldsText(["name", "lastname", "code", "address", "information", "email", "password", "rpassword"]);
+            document.getElementById("active1").checked = true;
+            $("#imageupload").removeAttr("src","");
+            $("#div_image").hide();
+            $(".js-user").show();
+            $("#email").prop("disabled", false);
+        }
+
+
+        $("#imageupload").on("error", function() {
+            $(this).attr("src", "");
+            $("#div_image").hide();
+        })
+
+        $("#save").on("click", function(){
+            let idemployee = $("#idemployee").val();
+            addEmployee(idemployee);
+        });
+
+
+
+        $(document).on("click", ".js-delete", async function(){
+            let employeeid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar el Empleado", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+                
+                try {
+                    let urldelete  = `${urlroot}/api/employee/${employeeid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Empleado", "Eliminado exitósamente");
+                        window.location.reload();
+                    }
+                    
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+
+          });
+
+        $(document).on("click", ".js-edit", async function(){
+            
+            $("#modalEmployee").modal('show');
+
+            $(".js-user").hide();
+            $("#div_image").hide();
+            $("#imageupload").removeAttr("src","");
+            $("#email").prop("disabled", true);
+
+            let idemployee = $(this).data("id");
+
+            let url = `${urlroot}/api/employee/${idemployee}`;
+
+            try {
+                let response = await fetch(url);
+                let employee = await response.json();
+
+                $("#name").val(employee.name);
+                $("#lastname").val(employee.lastname)
+                $("#address").val(employee.address);
+                $("#information").val(employee.information);
+                $("#code").val(employee.code);
+
+                if(employee.user.is_active)
+                    $("#active1").prop("checked", true);
+                else
+                    $("#active1").prop("checked", false);
+
+                
+                $("#email").val(employee.user.email);
+                
+                if(employee.photo){
+                    $("#div_image").show();
+                    $("#imageupload").attr("src", employee.photo);
+                }
+
+                $("#idemployee").val(employee.id);
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+        $("#photo").on("change", function(e){
+            console.log(e.target)
+            if(e.target.files && e.target.files[0]){
+
+                let namefile = e.target.files[0].name;
+
+                if(validExtension(namefile, ['jpg','png','jpeg'])){
+                    var reader = new FileReader();
+                    $("#div_image").show();
+                    $("#imageupload").attr("src", window.URL.createObjectURL(this.files[0]));
+                    $("#labelimage").text(this.files[0].name);
+                }else{
+                    $("#div_image").hide();
+                    e.target.files[0] = undefined;
+                    messageError("Debe Adjuntar una imagen");
+                }
+            }
+        });
+
+
+        async function addEmployee(idemployee){
+
+            let active    = document.getElementById('active1').checked ? true : false;
+            let {name, lastname, code, address, information, email, password, rpassword} = getObjectBody(["name","lastname", "code", "address", "information", "email", "password", "rpassword"])
+            let photo  = document.getElementById("photo").files[0];
+
+            if(validateEmptyOrNull(code)){ messageError("Debe de Ingresar código del Empleado"); return; }
+            if(validateEmptyOrNull(name)){ messageError("Debe de Ingresar el Nombre del Empleado"); return; }
+            if(validateEmptyOrNull(lastname)){ messageError("Debe de Ingresar el Apellido del Empleado"); return; }  
+            if(validateEmptyOrNull(email)){ messageError("Debe de Ingresar el email del Empleado"); return; }
+            if(!validateEmail(email)){ messageError("Debe de Ingresar un correo válido"); return; }
+
+            let form_data = new FormData();
+
+            form_data.append("name", name);
+            form_data.append("lastname", lastname);
+            form_data.append("code", code);
+            form_data.append("user.is_active", active);
+
+            if(address!=null && address!=undefined){
+                form_data.append("address", address);
+            }
+
+            if(information!=null && information!=undefined){
+                form_data.append("information", information);
+            }
+
+            if(photo != null && photo != undefined ){
+                if(!validExtension(photo.name, ['jpg','png','jpeg'])){  messageError("El Archivo adjunto debe ser una imagen"); return; }
+                form_data.append("photo", photo, photo.name);
+            }
+
+
+            if(idemployee==0){
+
+                if(validateEmptyOrNull(password)){ messageError("Debe de Ingresar la contraseña"); return; }
+                if(password!=rpassword){ messageError("Las contraseñas no coinciden"); return; }
+
+                form_data.append("user.email", email );
+                form_data.append("user.password", password);
+
+                let urladd   = `${urlroot}/api/employee`;
+
+                try{
+
+                    let response    = await fetch(urladd,{ method: "post", headers: { 'X-CSRFToken': csrftoken }, body: form_data });
+                    let employee    = await response.json();
+
+
+                    if(response.status==201){
+                        menssageExit("Empleado", "Creado exitósamente");
+                        window.location.reload();
+                    }else if(response.status==400){
+                        messageError("Ya existe un Empleado registrado con el mismo Username y/o Código");
+                    }else{
+                        throw new Error("Problemas al Intentar crear el empleado");
+                    }
+
+                }catch(error){
+                    messageError("Error al Intentar Agregar Vuelva a Intentar");
+                }
+
+
+            }else{
+
+                let urledit =  `${urlroot}/api/employee/${idemployee}`;
+
+                try {
+                    let response =  await fetch(urledit,{ method: "put", headers: {'X-CSRFToken': csrftoken }, body: form_data });
+                    let employee    = await response.json(); 
+
+                    menssageExit("Empleado", "Actualizado exitósamente")
+                    window.location.reload();
+                    
+                } catch (error) {
+                    messageError("Error, Problemas al Actualizar")
+                }
+            }
+        }
+
+    })();
+ </script>
+ 
+ {% endblock %}

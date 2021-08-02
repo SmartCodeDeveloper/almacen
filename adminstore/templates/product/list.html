@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Categorías  {% endblock %}
+
+{% block add_css %}
+<link href="{% static "assets/css/fastselect.min.css" %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css" integrity="sha512-bkB9w//jjNUnYbUpATZQCJu2khobZXvLP5GZ8jhltg7P/dghIrTaSJ7B/zdlBUT0W/LXGZ7FfCIqNvXjWKqCYA==" crossorigin="anonymous" />
+<style>
+    .fstElement{
+        font-size: 0.8em;
+        width: 100%;
+    }
+    .fstMultipleMode .fstControls{
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Productos</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <button id="addProduct" type="button" class="btn btn-sm btn-dark waves-effect waves-light ">
+                    <i class="mdi mdi-plus-circle"></i> Agregar Producto
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <h4 class="header-title">Listado de Productos</h4>
+
+
+                <table id="tableProduct" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Serie</th>
+                            <th>Categorias</th>
+                            <th>Stock</th>
+                            <th>Unidad</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        <tr>
+                            <td>000112558005 </td>
+                            <td>Nixont</td>
+                            <td>Lorem lorem</td>
+                            <td></td>
+                            <td></td>
+                            <td>25$</td>
+                            <td></td>
+                            <td>Activo</td>
+                            <td><i data-toggle="modal" data-target="#modalEmpleado"
+                                    class="la la-pencil-square ico-edit"></i></td>
+                            <td><i data-toggle="modal" data-target="#modalEliminar"
+                                    class="la la-trash ico-trash"></i></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+
+{% endblock %}
+
+
+{% block modals %}
+    {% include "product/modals/modal-product.html" %}
+    {% include "product/modals/modal-brand.html" %}
+ {% endblock %}
+ 
+ 
+ {% block add_script %}
+ 
+<script src="{% static "assets/js/fastselect.standalone.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js" integrity="sha512-pF+DNRwavWMukUv/LyzDyDMn8U2uvqYQdJN0Zvilr6DDo/56xPDZdDoyPDYZRSL4aOKO/FGKXTpzDyQJ8je8Qw==" crossorigin="anonymous"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+
+<script type="text/javascript">
+   (function(){
+
+       var csrftoken     = getCookie('csrftoken');
+       var urlroot = window.location.origin;
+
+       $.Fastselect.defaults = {
+
+            elementClass: 'fstElement',
+            singleModeClass: 'fstSingleMode',
+            noneSelectedClass: 'fstNoneSelected',
+            multipleModeClass: 'fstMultipleMode',
+            queryInputClass: 'fstQueryInput',
+            queryInputExpandedClass: 'fstQueryInputExpanded',
+            fakeInputClass: 'fstFakeInput',
+            controlsClass: 'fstControls',
+            toggleButtonClass: 'fstToggleBtn',
+            activeClass: 'fstActive',
+            itemSelectedClass: 'fstSelected',
+            choiceItemClass: 'fstChoiceItem',
+            choiceRemoveClass: 'fstChoiceRemove',
+            userOptionClass: 'fstUserOption',
+
+            resultsContClass: 'fstResults',
+            resultsOpenedClass: 'fstResultsOpened',
+            resultsFlippedClass: 'fstResultsFilpped',
+            groupClass: 'fstGroup',
+            itemClass: 'fstResultItem',
+            groupTitleClass: 'fstGroupTitle',
+            loadingClass: 'fstLoading',
+            noResultsClass: 'fstNoResults',
+            focusedItemClass: 'fstFocused',
+
+            matcher: null,
+
+            url: null,
+            loadOnce: false,
+            apiParam: 'query',
+            initialValue: null,
+            clearQueryOnSelect: true,
+            minQueryLength: 1,
+            focusFirstItem: false,
+            flipOnBottom: true,
+            typeTimeout: 150,
+            userOptionAllowed: false,
+            valueDelimiter: ',',
+            maxItems: null,
+
+            parseData: null,
+            onItemSelect: null,
+            onItemCreate: null,
+            onMaxItemsReached: null,
+
+            placeholder: 'Seleccione una opción',
+            searchPlaceholder: 'Buscar',
+            noResultsText: 'Sin Resultados',
+            userOptionPrefix: 'Agregar '
+
+        };
+
+
+        var $select= $('#series').selectize({
+            delimiter: ',',
+            persist: false,
+            create: function(input) {
+                return {
+                    value: input,
+                    text: input
+                }
+            }
+        });
+
+        var selectize = $select[0].selectize;
+
+
+        $('.multipleSelect').fastselect({
+            onItemSelect: function($item, itemModel) {
+                console.log(itemModel);
+            }
+        });
+
+        $('.multipleInputDynamicWithInitialValue').fastselect();
+
+        $('.singleInputDynamicWithInitialValue').fastselect({
+            onItemSelect: function($item, itemModel) {
+                console.log($item, itemModel);
+
+               // $('.selector').fastselect();
+            }
+        });
+       
+       var table = $('#tableProduct').dataTable({
+           searching: true,
+           processing: true,
+           serverSide: true,
+           stateSave: true,
+           ajax: "{% url 'order_list_product_json' %}"
+       });
+
+
+       $('#modalProduct').on('shown.bs.modal', function () {
+            //$('#code').click();
+       })  
+
+
+       $("#addProduct").on("click", function(){
+           $("#modalProduct").modal('show');
+           let idproduct = $("#idproduct").val();
+           $("#idproduct").val(0);
+           initFormAdd();
+       });
+
+       function initFormAdd(){
+           cleanFieldsText(["name", "code", "serie", "series", "price", "stock", "minstock", "minstockclient"]);
+           document.getElementById("active1").checked = true;
+           $("#imageupload").removeAttr("src","");
+           $("#div_image").hide();
+       }
+
+
+       $("#imageupload").on("error", function() {
+           $(this).attr("src", "");
+           $("#div_image").hide();
+       })
+
+       $("#save").on("click", function(){
+           let idproduct = $("#idproduct").val();
+           addProduct(idproduct);
+       });
+
+
+       $(document).on("click", ".js-delete", async function(){
+           let productid = $(this).data("id");
+           let alertPromise = showMessageAlert("Esta seguro que desea eliminar el Producto", "No podra revertir esta operación", "Si, quiero eliminar");
+
+           alertPromise.then(async (result) => {
+
+             if (result.value) {
+               
+               try {
+                   let urldelete  = `${urlroot}/api/product/${productid}`;
+                   const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                   if(response.status==204){
+                       menssageExit("Producto", "Eliminado exitósamente");
+                       window.location.reload();
+                   }
+                   
+               } catch (error) {
+                   messageError("Ha ocurrido un mensaje de error")
+               }
+
+             }
+
+           });
+
+         });
+
+       $(document).on("click", ".js-edit", async function(){
+           
+           $("#modalProduct").modal('show');
+           let idproduct = $(this).data("id");
+
+           let url = `${urlroot}/api/product/${idproduct}`;
+
+           try {
+               let response = await fetch(url);
+               let product  = await response.json();
+
+
+               selectize = $select[0].selectize;
+               selectize.clearOptions(true);
+
+               $("#code").val(product.code);
+               $("#name").val(product.name);
+               $("#price").val(product.price);
+               $("#stock").val(product.stock);
+
+               if(product.brand!=null && product.brand!=undefined){
+                 $("#brand").val(product.brand.id);
+               }
+               
+               if(product.unit!=null && product.unit!=undefined){
+                $("#unit").val(product.unit.id);
+               }
+               
+               $("#serie").val(product.serie);
+               //$("#series").val("");
+               $("#minstock").val(product.minstock);
+               $("#minstockclient").val(product.minstockclient);
+               //$("#series").val(product.series);
+
+               //$('#series').click();
+
+
+               if(product.series!=null && product.series!=undefined){
+
+                let valueArray = product.series.split(",");
+
+                valueArray.forEach(element => {
+                    selectize.createItem(element);
+                });
+
+               }
+
+               selectize.refreshItems();
+               selectize.refreshOptions();
+
+
+
+               if(product.active)
+                   $("#active1").prop("checked", true);
+               else
+                   $("#active1").prop("checked", false);
+                
+               
+               if(product.photo){
+                   $("#div_image").show();
+                   $("#imageupload").attr("src", product.photo);
+               }
+
+               $("#idproduct").val(product.id);
+               $(".multipleInputDynamicWithInitialValue").data('fastselect').destroy();
+               $('.singleInputDynamicWithInitialValue').data('fastselect').destroy();
+
+               let initialCategories = [];
+               let categoryids =  [];
+               product.categories.forEach(cat => {
+                    let name =  cat.code + " " +cat.name;
+                    initialCategories.push({text: name, value: cat.id})
+                    categoryids.push(cat.id);
+               });
+
+               categoryids = categoryids.join(",");
+               $("#category").val(categoryids);
+
+               $('.multipleInputDynamicWithInitialValue').fastselect({initialValue: initialCategories});
+               
+               
+               if(product.brand!=null && product.brand!=undefined){
+                    $('.singleInputDynamicWithInitialValue').fastselect({
+                        onItemSelect: function($item, itemModel) {
+
+                        },
+                        initialValue: {text: product.brand.name , value: product.brand.id}
+                    });
+                }else{
+
+                    $('.singleInputDynamicWithInitialValue').fastselect({
+                        onItemSelect: function($item, itemModel) {
+
+                        },
+                    });
+                }
+
+
+                $("#code").trigger('click');
+
+                    
+           } catch (error) {
+               console.log(error)
+               messageError("Problemas vuelva a intentar");
+           }
+
+       });
+
+       $("#photo").on("change", function(e){
+           console.log(e.target)
+           if(e.target.files && e.target.files[0]){
+
+               let namefile = e.target.files[0].name;
+
+               if(validExtension(namefile, ['jpg','png','jpeg'])){
+                   var reader = new FileReader();
+                   $("#div_image").show();
+                   $("#imageupload").attr("src", window.URL.createObjectURL(this.files[0]));
+                   $("#labelimage").text(this.files[0].name);
+               }else{
+                   $("#div_image").hide();
+                   e.target.files[0] = undefined;
+                   messageError("Debe Adjuntar una imagen");
+               }
+           }
+       });
+
+
+       async function addProduct(idproduct){
+
+           let active    = document.getElementById('active1').checked ? true : false;
+           let {name, code, serie, unit, brand, price, stock, minstock, minstockclient, series} = getObjectBody(["name","code", "serie", "unit", "brand", "price", "stock", "minstock", "minstockclient", "series"])
+           let photo     = document.getElementById("photo").files[0];
+
+           if(validateEmptyOrNull(code)){ messageError("Debe de Ingresar el Código del Producto"); return; }
+           if(validateEmptyOrNull(name)){ messageError("Debe de Ingresar el Nombre del Producto"); return; }
+           if(validateEmptyOrNull(brand)){ messageError("Debe Seleccionar la marca del Producto"); return; }
+           if(validateEmptyOrNull(price)){ messageError("Debe de Ingresar el Precio del Producto"); return; }
+           if(!$.isNumeric(price)){ messageError("El Precio del Producto debe ser númerico"); return; }
+           if(validateEmptyOrNull(stock)){ messageError("Debe de Ingresar el Stock del Producto"); return; }
+           if(!$.isNumeric(stock)){ messageError("El Stock del Producto debe ser númerico"); return; }
+           if(validateEmptyOrNull(minstock)){ messageError("Debe de Ingresar el Stock Minimo del Producto"); return; }
+           if(!$.isNumeric(minstock)){ messageError("El Stock Minimo del Producto debe ser númerico"); return; }
+           if(validateEmptyOrNull(minstockclient)){ messageError("Debe de Ingresar el Stock Minimo x Cliente del Producto"); return; }
+           if(!$.isNumeric(minstockclient)){ messageError("El Stock Minimo x Cliente del Producto debe ser númerico"); return; }
+
+           let form_data = new FormData();
+
+           form_data.append("code", code);
+           form_data.append("name", name);
+           form_data.append("unit", unit);
+           form_data.append("brand", brand);
+           form_data.append("price", price);
+           form_data.append("stock", stock);
+           form_data.append("minstock", minstock);
+           form_data.append("minstockclient", minstockclient);
+           form_data.append("series", series);
+           form_data.append("active", active);
+
+
+           if(serie!=undefined && serie!=null){
+                form_data.append("serie", serie);
+           }
+
+           let categories = $("#category").val();
+           categories = categories.split(",");
+           let categoriesAsso = [];
+
+           for(let i=0; i<categories.length; i++){
+                categoriesAsso.push({"id": parseInt(categories[i])})
+           }
+           //
+
+           if(photo != null && photo != undefined ){
+               if(!validExtension(photo.name, ['jpg','png','jpeg'])){  messageError("El Archivo adjunto debe ser una imagen"); return; }
+               form_data.append("photo", photo, photo.name);
+           }
+
+
+           if(idproduct==0){
+
+               let urladd   = `${urlroot}/api/product`;
+
+               try{
+
+                   let response = await fetch(urladd,{ method: "post", headers: { 'X-CSRFToken': csrftoken }, body: form_data });
+                   let product    = await response.json();
+
+
+                   if(response.status==406){
+                        messageError("El codigo del producto ya ha sido registrado anteriormente")
+                        return;
+                   }
+
+
+                   urladd        = `${urlroot}/api/assoc-product-category/${product.id}`;
+                   response      = await fetch(urladd,{ method: "post", headers: { 'Accept': 'application/json','Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify(categoriesAsso) });
+                   let result    = await response.json();
+
+
+                   if(response.status==200){
+                        menssageExit("Producto", "Creado exitósamente");
+                        window.location.reload();
+                   }else{
+                        throw new Error("Error, Problemas al Agregar");
+                   }
+
+
+               }catch(error){
+                   messageError("Error al Intentar Agregar Vuelva a Intentar");
+               }
+
+
+           }else{
+
+               let urledit =  `${urlroot}/api/product/${idproduct}`;
+
+
+               try {
+
+                   let response   =  await fetch(urledit,{ method: "put", headers: {'X-CSRFToken': csrftoken }, body: form_data });
+                   let product    =  await response.json(); 
+
+
+                   if(response.status==200){
+                        urladd = `${urlroot}/api/assoc-product-category/${product.id}`;
+                        response = await fetch(urladd,{ method: "post", headers: { 'Accept': 'application/json','Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify(categoriesAsso) });
+                        let result    = await response.json();
+
+
+                        if(response.status==200){
+                            menssageExit("Producto", "Actualizada exitósamente")
+                            window.location.reload();
+                        }else{
+                            throw new Error("Error, Problemas al Actualizar");
+                        }
+
+                   }else if(response.status==406){
+                        messageError("El codigo del producto ya ha sido registrado anteriormente")
+                   }else{
+                        throw new Error("Error, Problemas al Actualizar");
+                   }
+
+               } catch (error) {
+                   messageError("Error, Problemas al Actualizar")
+               }
+           }
+       }
+
+   })();
+</script>
+ 
+ {% endblock %}}

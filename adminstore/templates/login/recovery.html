@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Recuperar</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{% static "assets/images/favicon.ico" %}">
+        <!-- App css -->
+        <link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "assets/css/icons.min.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "assets/css/app.min.css" %}" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body class="authentication-bg authentication-bg-pattern">
+
+        <div class="account-pages mt-5 mb-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6 col-xl-5">
+                        <div class="card">
+
+                            <div class="card-body p-4">
+                                
+                                <div class="text-center w-75 m-auto">
+                                    <a href="{% url 'login' %}">
+                                        <!-- <span><img src="{% static "assets/images/logo-dark.png" %}" alt="" height="26"></span> -->
+                                        <span>Recuperar</span>
+                                    </a>
+                                    <p class="text-muted mb-4 mt-3">Ingrese su dirección de correo electrónico y le enviaremos un correo con instrucciones para restablecer su contraseña.</p>
+                                </div>
+
+                                <h5 class="auth-title"> Reestablecer la Contraseña </h5>
+
+                                <form action="#">
+                                    {% csrf_token %}
+                                    <div class="form-group mb-3">
+                                        <label for="email">Correo</label>
+                                        <input class="form-control" type="email" id="email" name="email" placeholder="">
+                                    </div>
+                                    <div class="form-group mb-0 text-center">
+                                        <button class="btn btn-danger btn-block" type="button" id="send"> Enviar </button>
+                                    </div>
+                                </form>    
+
+                            </div> <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <p class="text-muted">Regresar a <a href="{% url 'login' %}" class="text-muted ml-1"><b class="font-weight-semibold">Log in</b></a></p>
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->    
+
+                    </div> <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end page -->
+
+        <footer class="footer footer-alt">
+            2020 &copy; Admin<a href="" class="text-muted"></a> 
+        </footer>
+
+        <!-- Vendor js -->
+        <script src="{% static "assets/js/vendor.min.js" %}"></script>
+        <!-- App js -->
+        <script src="{% static "assets/js/app.min.js" %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <script src="{% static "assets/js/utils.js" %}"></script>
+        <script>
+            (function(){
+                var csrftoken     = getCookie('csrftoken');
+                var urlroot = window.location.origin;
+
+                $("#send").on("click", async function(){
+
+                    let email = $("#email").val();
+
+                    if(validateEmptyOrNull(email)){ messageError("Debe de Ingresar el Correo"); return; }
+                    if(!validateEmail(email)){ messageError("Debe de Ingresar un Correo válido"); return; }
+
+                    let urladd   = `${urlroot}/forgot`;
+                    let data     =  {email: email};
+
+                    try{
+
+                        let response    = await fetch(urladd,{ method: "post", headers: { 'Accept': 'application/json','Content-Type': 'application/json', 'X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                        let result      = await response.json();
+
+
+                        if(response.status==200){
+                            if(result){
+                                menssageExit("Correo de Restauración", "Enviado exitósamente");
+                            }else{
+                                messageError("No existe un usuario con el correo enviado");
+                            }
+                        }else{
+                            throw new Error("Problemas al Intentar enviar el correo");
+                        }
+
+                    }catch(error){
+                        messageError("Error al Intentar Agregar Vuelva a Intentar");
+                    }
+                });
+            })();
+        </script>
+        
+    </body>
+</html>

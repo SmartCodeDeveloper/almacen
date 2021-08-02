@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Notificaciones {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de notificaciones</li>
+                </ol>
+            </div>            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+        
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Notificaciones</h4>
+                <table id="tablemain" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Fecha Creación</th>
+                            <th>Mensaje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+{% endblock %}
+ 
+ 
+{% block add_script %}
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script> -->
+ <script src="{% static "assets/js/utils.js" %}"></script>
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        var table = $('#tablemain').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_notification_json' %}"
+        });
+
+    })();
+</script>
+
+{% endblock %}

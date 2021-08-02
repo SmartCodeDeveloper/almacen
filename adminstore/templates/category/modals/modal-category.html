@@ -1,0 +1,56 @@
+<div id="modalCategory" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detalles de la categoría</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="idcategory" id="idcategory" value="0" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="code" class="control-label">Código</label>
+                            <input type="text" class="form-control" id="code" name="code" placeholder="">
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="example-select">Categoría Padre</label>
+                            <select class="form-control" id="example-select">
+                                <option>Abierto</option>
+                                <option>Pendiente</option>
+                                <option>Cerrado</option>
+                                <option>Cancelado</option>
+                            </select>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group no-margin">
+                            <label for="name" class="control-label">Nombre</label>
+                            <textarea class="form-control" id="name" name="name" placeholder=""></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <div class="custom-control custom-checkbox checkbox-info">
+                                <input type="checkbox" class="custom-control-input" id="active1" name="active1">
+                                <label class="custom-control-label" for="active1">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="save" class="btn btn-danger waves-effect waves-light">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div><!-- /.modal -->

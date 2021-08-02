@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Carga Masiva {% endblock %}
+
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Cargar Listado de Productos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+
+                <h4 class="header-title">Cargar Listado de Productos</h4>
+
+
+                <form method="POST" action="{% url 'csv_load' %}" id="formCSV" enctype="multipart/form-data" class="pt-2">
+                    {% csrf_token %}
+
+                    {% if mjs %}
+                        <div class="alert alert-success" role="alert">
+                            {{mjs}}
+                        </div>
+                    {% endif %}
+
+
+                    <div class="row mt-1">
+                        <div class="col-md-12">
+                            <label for="activo">Subir Archivo CSV</label>
+                            <fieldset class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="csv" name="csv">
+                                    <label class="custom-file-label" id="labelcsv"  for="csv">Buscar
+                                        CSV</label>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <!-- <div class="custom-control custom-checkbox mb-3">
+                        <input type="checkbox" class="custom-control-input" id="checkbox-signin" checked>
+                        <label class="custom-control-label" for="checkbox-signin">Recordarme</label>
+                    </div> -->
+
+                    <div class="form-group mb-0 text-center">
+                        <button class="btn btn-primary btn-block" type="button" id="save"> Subir CSV y Procesar </button>
+                    </div>
+
+                </form>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+
+{% endblock %}
+
+
+{% block modals %}
+
+ {% endblock %}
+ 
+ 
+ {% block add_script %}
+ 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+
+<script type="text/javascript">
+   (function(){
+
+
+        $("#save").on("click", function(){
+            // let name     = $("#name").val();
+            // let responsible = $("#responsible").val();
+            let csv  = document.getElementById("csv").files[0];
+
+            if(csv==null || csv==undefined){ messageError("Debe de Ingresar un archivo CSV"); return; }
+            if(!validExtension(csv.name, ['csv',])){  messageError("El Archivo adjunto debe ser un CSV"); return; }
+            // if(validateEmptyOrNull(responsible)){ messageError("Debe de Ingresar el Responsable de la Empresa"); return; }
+
+             $("#formCSV").submit();
+        });
+
+
+        $("#csv").on("change", function(e){
+            console.log(e.target)
+            if(e.target.files && e.target.files[0]){
+
+                let namefile = e.target.files[0].name;
+
+                if(validExtension(namefile, ['csv',])){
+                    var reader = new FileReader();
+                    $("#labelcsv").text(this.files[0].name);
+                }else{
+                    e.target.files[0] = undefined;
+                    messageError("Debe Adjuntar un archivo CSV");
+                }
+            }
+        });
+
+
+
+   })();
+</script>
+ 
+ {% endblock %}}

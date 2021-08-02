@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+
+
+{% block contentmain %}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+
+            <h4 class="page-title">Dashboard</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row no-gutters">
+    <div class="col-md-6 col-xl-3">
+        <div class="widget-rounded-circle bg-soft-primary rounded-0 card-box mb-0">
+            <div class="row">
+                <div class="col-4">
+                    <div class="avatar-lg rounded-circle bg-soft-primary">
+                        <i class="fe-tag font-22 avatar-title text-primary"></i>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="text-right">
+                        <h3 class="text-dark mt-1"><span data-plugin="counterup">{{total}}</span></h3>
+                        <p class="text-primary mb-1 text-truncate">Total Pedidos</p>
+                    </div>
+                </div>
+            </div> <!-- end row-->
+        </div> <!-- end widget-rounded-circle-->
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="widget-rounded-circle bg-soft-warning rounded-0 card-box mb-0">
+            <div class="row">
+                <div class="col-4">
+                    <div class="avatar-lg rounded-circle bg-soft-warning">
+                        <i class="fe-clock font-22 avatar-title text-warning"></i>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="text-right">
+                        <h3 class="text-dark mt-1"><span data-plugin="counterup">{{pending}}</span></h3>
+                        <p class="text-warning mb-1 text-truncate">Pedidos Pendientes</p>
+                    </div>
+                </div>
+            </div> <!-- end row-->
+        </div> <!-- end widget-rounded-circle-->
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="widget-rounded-circle bg-soft-success rounded-0 card-box mb-0">
+            <div class="row">
+                <div class="col-4">
+                    <div class="avatar-lg rounded-circle bg-soft-success">
+                        <i class="fe-check-circle font-22 avatar-title text-success"></i>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="text-right">
+                        <h3 class="text-dark mt-1"><span data-plugin="counterup">{{approved}}</span></h3>
+                        <p class="text-success mb-1 text-truncate">Pedidos Aprobados</p>
+                    </div>
+                </div>
+            </div> <!-- end row-->
+        </div> <!-- end widget-rounded-circle-->
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <div class="widget-rounded-circle bg-soft-danger rounded-0 card-box mb-0">
+            <div class="row">
+                <div class="col-4">
+                    <div class="avatar-lg rounded-circle bg-soft-danger">
+                        <i class="fe-trash-2 font-22 avatar-title text-danger"></i>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="text-right">
+                        <h3 class="text-dark mt-1"><span data-plugin="counterup">{{denied}}</span></h3>
+                        <p class="text-danger mb-1 text-truncate">Pedidos Cancelados</p>
+                    </div>
+                </div>
+            </div> <!-- end row-->
+        </div> <!-- end widget-rounded-circle-->
+    </div> <!-- end col-->
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-box">
+            <a href="{% url 'orders' %}" class="btn btn-sm btn-dark waves-effect waves-light float-right">
+                <i class="mdi mdi-plus-circle"></i> Gestionar pedidos
+            </a>
+            <h4 class="header-title mb-4">Pedidos Recientes</h4>
+
+            <div class="table-responsive">
+                <table class="table table-hover m-0 table-centered nowrap w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Empleado</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Fecha de Creación</th>
+                            <th>Fecha de Entrega </th>
+                            <!-- <th class="hidden-sm">Acción</th> -->
+                        </tr>
+                    </thead>
+
+                    <tbody>
+    
+                        {% for order in orders %}
+                            <tr>
+                                <td><b>#{{order.id}}</b></td>
+                                <td>
+                                    {{order.employee.name}} {{order.employee.lastname}}
+                                </td>
+                                <td>
+                                    {% if order.priority == 1%}
+                                        <span class="badge badge-light-secondary">Baja</span>
+                                    {% elif order.priority == 2 %}
+                                        <span class="badge badge-light-warning">Media</span>
+                                    {% elif order.priority == 3 %}
+                                        <span class="badge badge-light-danger">Alta</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.status == 1%}
+                                        <span class="badge badge-warning">Pendiente</span>
+                                    {% elif order.status == 2 %}
+                                        <span class="badge badge-info">Abierto</span>
+                                    {% elif order.status == 3 %}
+                                        <span class="badge badge-danger">Cancelados</span>
+                                    {% endif %}
+                                </td>
+        
+                                <td>
+                                    {{ order.date_created | date:"d/m/Y" }}
+                                </td>
+        
+                                <td>
+                                    {% if order.date_delivery %} {{ order.date_delivery| date:"d/m/Y"}} {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div><!-- end col -->
+</div>
+<!-- end row -->
+{% endblock %}
+
+
+{% block modals %}
+   
+{% endblock %}
+ 
+ 
+{% block add_script %}
+
+{% endblock %}

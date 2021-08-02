@@ -1,0 +1,146 @@
+<div id="modalProduct" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detalles del Producto</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="idproduct" name="idproduct" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="code" class="control-label">Código*</label>
+                            <input type="text" class="form-control" id="code" name="code" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="serie" class="control-label">Nro. Serie</label>
+                            <input type="text" class="form-control" id="serie" name="serie" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="name" class="control-label">Nombre*</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group mb-2 mt-2">
+                            <label for="">Series</label>
+                            <input type="text" id="series" name="series" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="" class="control-label">Marca</label>
+                        <div class="input-group mb-3">
+                            <input type="text" value=""  class="singleInputDynamicWithInitialValue" data-url="{% url 'list_brand_json' %}" data-load-once="true" id="brand" name="brand" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="" class="control-label">Categoría</label>
+                        <div class="input-group mb-3">
+                            <!-- <input type="text" class="form-control" placeholder=""
+                                aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-toggle="modal"
+                                data-target="#modalCategoria"><i
+                                        class="la la-plus"></i></button> -->
+                                <input
+                                        type="text"
+                                        multiple
+                                        class="multipleInputDynamicWithInitialValue"
+                                        value=""
+                                        data-url="{% url 'list_category_json' %}"
+                                        data-load-once="true"
+                                        name="category" id="category" />
+
+                                <!-- <select class="multipleSelect" id="seleccionado" multiple name="language" data-url="">
+                                         <option value="1">Bangladesh</option>
+                                        <option selected value="2">Barbados</option>
+                                        <option selected value="3">Belarus</option>
+                                        <option value="4">Belgium1</option>
+                                        <option value="Belgium2">Belgium2</option>
+                                        <option value="Belgium3">Belgium3</option>
+                                        <option value="Belgium4">Belgium4</option>
+                                        <option value="Belgium5">Belgium5</option>
+                                </select> -->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="unit">Unidad</label>
+                            <select class="form-control" id="unit">
+                                {% for unit in units %}
+                                <option value="{{unit.pk}}">{{unit.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="price" class="control-label">Precio*</label>
+                            <input type="text" class="form-control" id="price" name="price" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="stock" class="control-label">Stock*</label>
+                            <input type="text" class="form-control" id="stock" name="stock" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="minstock" class="control-label">Stock Mínimo Almacen*</label>
+                            <input type="text" class="form-control" id="minstock" name="minstock" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="minstockclient" class="control-label">Stock Minimo X Cliente*</label>
+                            <input type="text" class="form-control" id="minstockclient" name="minstockclient" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-md-12">  
+                        <div class="form-group mb-2">
+                            <label>Imagen del producto</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="photo"  lang="es">
+                                    <label class="custom-file-label" id="labelimage" for="photo">Subir imagen</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <div class="custom-control custom-checkbox checkbox-info">
+                                <input type="checkbox" class="custom-control-input" id="active1" name="active1">
+                                <label class="custom-control-label" for="active1">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="div_image" style="display: none;" >
+                    <div class="col-12 mt-3">
+                        <image id="imageupload" name="imageupload" src="" width="100" height="100" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect"
+                    data-dismiss="modal">Cancelar</button>
+                <button id="save" type="button" class="btn btn-danger waves-effect waves-light">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div><!-- /.modal -->

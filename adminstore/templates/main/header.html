@@ -1,0 +1,166 @@
+{% load static %}
+<!-- Navigation Bar-->
+<header id="topnav">
+    <!-- Topbar Start -->
+    <div class="navbar-custom">
+        <div class="container-fluid">
+            <ul class="list-unstyled topnav-menu float-right mb-0">
+
+                <li class="dropdown notification-list">
+                    <!-- Mobile menu toggle-->
+                    <a class="navbar-toggle nav-link">
+                        <div class="lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </a>
+                    <!-- End mobile menu toggle-->
+                </li>
+
+                <li class="dropdown notification-list">
+                    <a class="nav-link dropdown-toggle  waves-effect" data-toggle="dropdown" href="#" role="button"
+                        aria-haspopup="false" aria-expanded="false">
+                        <i class="fe-bell noti-icon"></i>
+                        {% if cquantity > 0%}
+                        <span class="badge badge-light rounded-circle noti-icon-badge">{{cquantity}}</span>
+                        {% endif %}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-lg">
+
+                        <div class="dropdown-item noti-title">
+                            <h5 class="m-0">
+                                <span class="float-right">
+                                </span>Notificaciones
+                            </h5>
+                        </div>
+
+                        <div class="slimscroll noti-scroll">
+
+                            {%  for noti in cnotifications %}
+                                <a href="{% url 'notifications' %}" class="dropdown-item notify-item">
+                                    <div class="notify-icon bg-primary">
+                                        <i class="mdi mdi-comment-account-outline"></i>
+                                    </div>
+                                    <p class="notify-details">{{noti.message|slice:"0:60"}}
+                                        <small class="text-muted">{{noti.date_created|timesince}}</small>
+                                    </p>
+                                </a>
+                            {% endfor %}
+
+              
+
+
+           
+                            <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <div class="notify-icon">
+                                    <img src="{% static "assets/images/users/user-4.jpg" %}" class="img-fluid rounded-circle"
+                                        alt="" /> </div>
+                                <p class="notify-details">Karen Robinson</p>
+                                <p class="text-muted mb-0 user-msg">
+                                    <small>Wow ! this admin looks good and awesome design</small>
+                                </p>
+                            </a>
+
+                      
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <div class="notify-icon bg-warning">
+                                    <i class="mdi mdi-account-plus"></i>
+                                </div>
+                                <p class="notify-details">New user registered.
+                                    <small class="text-muted">5 hours ago</small>
+                                </p>
+                            </a>
+
+              
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <div class="notify-icon bg-info">
+                                    <i class="mdi mdi-comment-account-outline"></i>
+                                </div>
+                                <p class="notify-details">Caleb Flakelar commented on Admin
+                                    <small class="text-muted">4 days ago</small>
+                                </p>
+                            </a>
+
+                   
+                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <div class="notify-icon bg-secondary">
+                                    <i class="mdi mdi-heart"></i>
+                                </div>
+                                <p class="notify-details">Carlos Crouch liked
+                                    <b>Admin</b>
+                                    <small class="text-muted">13 days ago</small>
+                                </p>
+                            </a>
+                        </div> -->
+
+                     
+                        <a href="{% url 'notifications' %}"
+                            class="dropdown-item text-center text-primary notify-item notify-all">
+                            Ver Todas
+                            <i class="fi-arrow-right"></i>
+                        </a>
+
+                    </div>
+                </li> 
+
+                <li class="dropdown notification-list">
+                    <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#"
+                        role="button" aria-haspopup="false" aria-expanded="false">
+                        <img src="{% static "assets/images/users/user-1.jpg" %}" alt="user-image" class="rounded-circle">
+                        <span class="pro-user-name ml-1">
+                            {{ user.first_name }} {{ user.last_name}}<i class="mdi mdi-chevron-down"></i>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                        <!-- item-->
+                        <div class="dropdown-item noti-title">
+                            <h5 class="m-0">
+                                Bienvenido !
+                            </h5>
+                        </div>
+                        <!-- item-->
+                        <a href="{% url 'profile' %}" class="dropdown-item notify-item">
+                            <i class="fe-user"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                        <!-- item-->
+                        <a href="{% url 'profile_password' %}" class="dropdown-item notify-item">
+                            <i class="fe-settings"></i>
+                            <span>Ajustes</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <!-- item-->
+                        <a href="{% url 'logout' %}" class="dropdown-item notify-item">
+                            <i class="fe-log-out"></i>
+                            <span>Salir</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- LOGO -->
+            <div class="logo-box">
+                <a href="{% url 'dashboard' %}" class="logo text-center">
+                    <span class="logo-lg">
+                        <img style="width: 65px; height: 65px;"  src="{% static "assets/images/logo2732.png" %}" alt="" height="26">
+                        <!-- <span class="logo-lg-text-dark">Upvex</span> -->
+                    </span>
+                    <span class="logo-sm">
+                        <!-- <span class="logo-sm-text-dark">X</span> -->
+                        <img style="width: 35px; height: 35px;" src="{% static "assets/images/logo512.png" %}" alt="" height="28">
+                    </span>
+                </a>
+            </div>
+
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <!-- end Topbar -->
+
+    {% include "main/menu.html" %}
+
+    <!-- end navbar-custom -->
+</header>
+<!-- End Navigation Bar-->

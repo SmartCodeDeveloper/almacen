@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Mostrar Manifiesto  {% endblock %}
+
+{% block add_css %}
+<style>
+    .datepicker{
+        z-index: 10000 !important;
+    }
+</style>
+{% endblock %}
+
+
+{% block contentmain %}
+
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'list_manifiests' %}">Manifiesto</a></li>
+                    <li class="breadcrumb-item active">Ver Manifiesto de entrega</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-box">
+            <!-- Logo & title -->
+
+            <div class="mb-2">
+                <img src="{% static 'assets/images/logomanifiesto.png' %}" alt="" height="100" weight="200">
+            </div>
+            <div class="clearfix">
+                <div class="float-left">
+                    <h4 class="m-0 d-print-none">Manifiestode Entrega</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mt-3 float-md-left">
+                        <p><strong>Fecha:  </strong> <span class="float-right">
+                                &nbsp;&nbsp;&nbsp;&nbsp; {{manifest.date_manifest|date:"d/m/Y"}}</span></p>
+                        <p><strong>Empleado: &nbsp;  </strong> {{manifest.employee.name}} {{manifest.employee.lastname}} </span></p>
+                        <p><strong>Nro: </strong> <span class="float-right">{{manifest.pk}} </span></p>
+                    </div>
+                </div><!-- end col -->
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table mt-4 table-centered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Producto</th>
+                                    <th>Seriales</th>
+                                    <th>Categoría</th>
+                                    <th>Cantidad</th>
+                                    <th>Unidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for deta in details %}
+                                <tr>
+                                    <td>{{deta.product.code}}</td>
+                                    <td>
+                                        {{deta.product.name}}
+                                    </td>
+                                    <td>{% if deta.seriales %}{{deta.seriales}} {% endif %}</td>
+                                    <td>
+                                        {{deta.catNames}}
+                                    </td>
+                                    <td>{{deta.quantity}}</td>
+                                    <td>{% if deta.product.unit %} {{deta.product.unit.name}} {% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- end table-responsive -->
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="clearfix pt-5">
+                        <h6 class="text-muted">Observaciones:</h6>
+
+                        <small class="text-muted">
+                           {% if manifest.description %} {{manifest.description}}  {% endif %}
+                        </small>
+                    </div>
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+            <div class="row">
+                <div class="col-sm-4 offset-sm-2 mt-5">
+                    <label for="">{{manifest.receive}}</label>
+                    <div class="div-firma"></div>
+                </div> <!-- end col -->
+                <div class="col-sm-4 mt-5">
+                    <label for="">{{manifest.delivery}}</label>
+                    <div class="div-firma"></div>
+                </div> <!-- end col -->
+
+            </div>
+            <!-- end row -->
+            <div class="mt-4 mb-1">
+                <div class="text-right d-print-none">
+                    <a href="#" data-id="{{manifest.pk}}" id="printbutton"  class="btn btn-primary waves-effect waves-light "><i
+                            class="mdi mdi-printer mr-1"></i>Imprimir</a>
+                </div>
+            </div>
+        </div> <!-- end card-box -->
+    </div> <!-- end col -->
+</div>
+
+{% endblock %}
+
+
+
+{% block add_script %}
+<script src="{% static "assets/js/jquery.autocomplete.min.js" %}"></script>
+<script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+<script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+<script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+<script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script>
+<!-- third party js ends -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{% static "assets/js/utils.js" %}"></script>
+
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot       = window.location.origin;
+        var productoSeleccionado = undefined;
+
+
+
+        $("#printbutton").on("click", async function(e){
+
+            e.preventDefault();
+
+            let idmanifest = $(this).data("id");
+
+            try {
+
+                let urladd   = `${urlroot}/api/manifest-change/${idmanifest}`;
+                let data = {};
+
+                let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                let change         = await response.json();
+
+                if(change){
+                    window.print();
+                }
+                
+            } catch (error) {
+                messageError("Ocurrio un error, vuelva a intentarlo")
+            }
+        });
+
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Listado de Ordenes  {% endblock %}
+
+
+{% block contentmain %}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12 m-2">
+        <div class="page-title-box">
+            <div class="page-title-left">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Listado de Empleados</li>
+                </ol>
+            </div>
+            <div class="float-right mr-2">
+                <a href="{% url 'order' %}" class="btn btn-sm btn-dark waves-effect waves-light " >
+                    <i class="mdi mdi-plus-circle"></i> Agregar Orden
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+        
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Ordenes</h4>
+                <table id="tablemain" class="table dt-responsive nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Fecha Creación</th>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Método Pago</th>
+                            <th>Manifiesto</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div>
+
+{% endblock %}
+
+
+{% block modals %}
+   {% include "order/modals/modal-order.html" %}
+{% endblock %}
+ 
+ 
+{% block add_script %}
+ <script src="{% static "assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+ <script src="{% static "assets/js/bootstrap-datepicker.es.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/jquery.dataTables.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.bootstrap4.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.responsive.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/responsive.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.buttons.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.bootstrap4.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.html5.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.flash.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/buttons.print.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.keyTable.min.js" %}"></script>
+ <script src="{% static  "assets/libs/datatables/dataTables.select.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/pdfmake.min.js" %}"></script>
+ <script src="{% static  "assets/libs/pdfmake/vfs_fonts.js" %}"></script> -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+ <script src="{% static "assets/js/utils.js" %}"></script>
+<script type="text/javascript">
+    (function(){
+
+        var csrftoken     = getCookie('csrftoken');
+        var urlroot = window.location.origin;
+
+        var table = $('#tablemain').dataTable({
+            searching: true,
+            processing: true,
+            serverSide: true,
+            stateSave: true,
+            ajax: "{% url 'order_list_orden_json' %}"
+        });
+
+
+
+        $(document).on("click", ".js-manifiesto", function(){
+
+            let idorder = $(this).data("id");
+            window.location.href = `${urlroot}/manifiesto-orden/${idorder}`;
+
+        })
+
+
+        $(document).on("click", ".js-change-status", async function(){
+
+
+            $("#modalOrder").modal('show');
+            $("#date_delivery").val("");
+
+            let idorder = $(this).data("id");
+            $("#idorder").val(idorder);
+
+            let url = `${urlroot}/api/order/${idorder}`;
+
+            try {
+                let response = await fetch(url);
+                let order = await response.json();
+
+                $("#priority").val(order.priority);
+                $("#estado").val(order.status);
+
+                /*if(order.status==1){
+                    $("#estado").prop("disabled", false);
+                }else{
+                    $("#estado").prop("disabled", true);
+                }*/
+
+                if(order.date_delivery!=null && order.date_delivery!=undefined)
+                {
+                    let datemod = convertDateSpanish(order.date_delivery);
+                    $("#date_delivery").val(datemod);
+                }
+
+                if(order.date_delivery2!=null && order.date_delivery2!=undefined)
+                {
+                    let datemod = convertDateSpanish(order.date_delivery2);
+                    $("#date_delivery2").val(datemod);
+                }else{
+                    $("#date_delivery2").val("");
+                }
+
+                if(order.hour_delivery!=null && order.hour_delivery!=undefined)
+                {
+                    $("#hour_delivery").val(order.hour_delivery.substring(0,5));
+                }else{
+                    $("#hour_delivery").val("");
+                }
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+        $(document).on("click", ".js-change-priority", async function(){
+
+            $("#modalOrder").modal('show');
+            $("#date_delivery").val("");
+
+            let idorder = $(this).data("id");
+            $("#idorder").val(idorder);
+
+            let url = `${urlroot}/api/order/${idorder}`;
+
+            try {
+                let response = await fetch(url);
+                let order = await response.json();
+
+                $("#priority").val(order.priority);
+                $("#estado").val(order.status);
+
+                if(order.status==1){
+                    $("#estado").prop("disabled", false);
+                }else{
+                    $("#estado").prop("disabled", true);
+                }
+
+                if(order.date_delivery!=null && order.date_delivery!=undefined)
+                {
+                    let datemod = convertDateSpanish(order.date_delivery);
+                    $("#date_delivery").val(datemod);
+                }else{
+                    $("#date_delivery").val("");
+                }
+
+                if(order.date_delivery2!=null && order.date_delivery2!=undefined)
+                {
+                    let datemod = convertDateSpanish(order.date_delivery2);
+                    $("#date_delivery2").val(datemod);
+                }else{
+                    $("#date_delivery2").val("");
+                }
+
+                if(order.hour_delivery!=null && order.hour_delivery!=undefined)
+                {
+                    $("#hour_delivery").val(order.hour_delivery.substring(0,5));
+                }else{
+                    $("#hour_delivery").val("");
+                }
+                     
+            } catch (error) {
+                messageError("Problemas vuelva a intentar");
+            }
+
+        });
+
+        $("#save").on("click", async function(){
+
+            let { priority, estado, date_delivery, date_delivery2, hour_delivery } = getObjectBody(["priority","estado", "date_delivery", "date_delivery2", "hour_delivery"]);
+            let idorder = $("#idorder").val();
+
+            if(date_delivery!=null && date_delivery!=undefined && date_delivery!="")
+            {
+                date_delivery = convertDate(date_delivery);
+            }
+
+            if(date_delivery2!=null && date_delivery2!=undefined && date_delivery2!="")
+            {
+                date_delivery2 = convertDate(date_delivery2);
+            }
+
+            try {
+
+                let urladd   = `${urlroot}/api/order-change/${idorder}`;
+                let data = {priority, status: estado, date_delivery, date_delivery2, hour_delivery};
+
+                let response       = await fetch(urladd,{ method: "post", headers: {'Accept': 'application/json','Content-Type': 'application/json','X-CSRFToken': csrftoken }, body: JSON.stringify(data) });
+                let change         = await response.json();
+
+                if(change){
+                    menssageExit("Orden", "Actualizada exitósamente");
+                    window.location.reload();
+                }
+                
+            } catch (error) {
+                messageError("Ocurrio un error, vuelva a intentarlo")
+            }
+        })
+
+
+        $(document).on("click", ".js-edit", async function(){
+            
+            let idorder = $(this).data("id");
+            window.location.href = `${urlroot}/orden/${idorder}`;
+
+        });
+
+        $("#date_delivery").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+        $("#date_delivery2").datepicker({
+            isRTL: false,
+            language: 'es',
+            autoclose: true
+        });
+
+
+        $(document).on("click", ".js-delete", async function(){
+            let orderid = $(this).data("id");
+            let alertPromise = showMessageAlert("Esta seguro que desea eliminar la Orden", "No podra revertir esta operación", "Si, quiero eliminar");
+
+            alertPromise.then(async (result) => {
+
+              if (result.value) {
+
+                try {
+                    let urldelete  = `${urlroot}/api/order/${orderid}`;
+                    const response =  await fetch(urldelete, { method: "delete", headers: { 'X-CSRFToken': csrftoken} });
+
+                    if(response.status==204){
+                        menssageExit("Orden", "Eliminada exitósamente");
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    messageError("Ha ocurrido un mensaje de error")
+                }
+
+              }
+
+            });
+        });
+
+    })();
+</script>
+
+{% endblock %}
